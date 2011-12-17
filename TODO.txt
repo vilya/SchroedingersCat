@@ -1,0 +1,10 @@
+* Draw the playing area.
+* Put a blob on the screen for the player & make it move about in response to key presses.
+* Get some particles on screen and moving.
+* Collision detection between player and particles (pixel-accurate!)
+* Respawn logic for when you run into a particle (brief - 1 second? - period of invulnerability after respawn).
+* Paint some textures for player, particles, play area.
+* Load in the textures and update the rendering to use them.
+* Work on the game logic (rate at which particles spawn, particle movement & reflection).
+* Add special player abilities.
+
