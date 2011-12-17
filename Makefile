@@ -11,8 +11,8 @@ LIBS = -framework OpenGL -framework GLUT
 
 
 OBJS = \
+	$(OBJ)/gamedata.o \
 	$(OBJ)/main.o \
-	$(OBJ)/particles.o \
 	$(OBJ)/vec2.o
 
 
