@@ -7,6 +7,8 @@
 #include <GLUT/glut.h>
 #include <OpenGL/gl.h>
 
+#include "gamedata.h"
+
 namespace cat {
 
   //
@@ -152,6 +154,8 @@ int main(int argc, char** argv)
 {
   printf("%s\n", cat::kGameName);
   printf("%s\n", cat::kCopyrightMessage);
+
+  cat::initGameData();
   cat::start();
 }
 
