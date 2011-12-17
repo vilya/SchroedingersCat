@@ -10,7 +10,10 @@ LDFLAGS =
 LIBS = -framework OpenGL -framework GLUT
 
 
-OBJS = $(OBJ)/main.o
+OBJS = \
+	$(OBJ)/main.o \
+	$(OBJ)/particles.o \
+	$(OBJ)/vec2.o
 
 
 EXE = SchroedingersCat
