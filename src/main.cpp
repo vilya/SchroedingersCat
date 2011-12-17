@@ -88,21 +88,26 @@ namespace cat {
     const unsigned char kEsc = 27;
     if (key == kEsc)
       exit(0);
+
+    fprintf(stderr, "key %d pressed\n", key);
   }
 
 
   void keyReleased(unsigned char key, int x, int y)
   {
+    fprintf(stderr, "key %d released\n", key);
   }
 
 
   void specialKeyPressed(int key, int x, int y)
   {
+    fprintf(stderr, "special key %d pressed\n", key);
   }
 
 
   void specialKeyReleased(int key, int x, int y)
   {
+    fprintf(stderr, "special key %d released\n", key);
   }
 
 
