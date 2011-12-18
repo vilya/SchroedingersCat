@@ -15,7 +15,6 @@ OBJS = \
 	$(OBJ)/gamedata.o \
 	$(OBJ)/image.o \
 	$(OBJ)/main.o \
-	$(OBJ)/shader.o \
 	$(OBJ)/vec2.o
 
 

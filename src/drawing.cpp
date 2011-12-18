@@ -2,7 +2,6 @@
 
 #include "image.h"
 #include "gamedata.h"
-#include "shader.h"
 
 #include <cassert>
 #include <cstdlib>
