@@ -5,6 +5,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <cstdio>
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
@@ -189,7 +190,17 @@ namespace cat {
   {
     assert(game != NULL);
     assert(game->draw != NULL);
-    // TODO
+
+    WindowData& win = game->window;
+
+    float top = win.height - kCharHeight - 10;
+    char msg[1024];
+
+    snprintf(msg, 1024, "Survived %1.2fs", game->gameTime / 1000.0);
+    DrawText(10, top, msg, eAlignLeft);
+
+    snprintf(msg, 1024, "%d lives", game->player.livesRemaining);
+    DrawText(10, top, msg, eAlignRight);
   }
 
 
