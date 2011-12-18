@@ -42,8 +42,8 @@ namespace cat {
 
   struct DrawingData {
     GLuint floorTextureID;
-    GLuint playerFrontTextureID;
-    GLuint playerBackTextureID;
+    GLuint playerFrontTextureID[ePowerUpCount];
+    GLuint playerBackTextureID[ePowerUpCount];
     GLuint particleTextureID;
 
     char* statusMessage;
@@ -73,8 +73,6 @@ namespace cat {
 
   DrawingData::DrawingData() :
     floorTextureID(0),
-    playerFrontTextureID(0),
-    playerBackTextureID(0),
     particleTextureID(0),
     statusMessage(NULL)
   {
@@ -85,15 +83,33 @@ namespace cat {
     delete floor;
 
     // Load the player textures.
-    Image* playerFront = LoadJPEG("resource/player_front.jpg");
-    assert(playerFront);
-    playerFrontTextureID = UploadTexture(playerFront);
-    delete playerFront;
+    const char* frontTexturePaths[] = {
+      "resource/player_front_nopowerup.jpg",
+      "resource/player_front_superposition.jpg",
+      "resource/player_front_entangling.jpg",
+      "resource/player_front_entanglement.jpg"
+    };
+    const char* backTexturePaths[] = {
+      //"resource/player_back_nopowerup.jpg",
+      //"resource/player_back_superposition.jpg",
+      //"resource/player_back_entangling.jpg",
+      //"resource/player_back_entanglement.jpg"
+      "resource/player_back.jpg",
+      "resource/player_back.jpg",
+      "resource/player_back.jpg",
+      "resource/player_back.jpg",
+    };
+    for (int p = ePowerUpNone; p < ePowerUpCount; ++p) {
+      Image* front = LoadJPEG(frontTexturePaths[p]);
+      assert(front);
+      playerFrontTextureID[p] = UploadTexture(front);
+      delete front;
 
-    Image* playerBack = LoadJPEG("resource/player_back.jpg");
-    assert(playerBack);
-    playerBackTextureID = UploadTexture(playerBack);
-    delete playerBack;
+      Image* back = LoadJPEG(backTexturePaths[p]);
+      assert(back);
+      playerBackTextureID[p] = UploadTexture(back);
+      delete back;
+    }
 
     // Load the particle textures.
     Image* particle = LoadJPEG("resource/particle.jpg");
@@ -107,10 +123,12 @@ namespace cat {
   {
     if (floorTextureID)
       glDeleteTextures(1, &floorTextureID);
-    if (playerFrontTextureID)
-      glDeleteTextures(1, &playerFrontTextureID);
-    if (playerBackTextureID)
-      glDeleteTextures(1, &playerBackTextureID);
+    for (int p = ePowerUpNone; p < ePowerUpCount; ++p) {
+      if (playerFrontTextureID[p])
+        glDeleteTextures(1, &playerFrontTextureID[p]);
+      if (playerBackTextureID[p])
+        glDeleteTextures(1, &playerBackTextureID[p]);
+    }
     if (particleTextureID)
       glDeleteTextures(1, &particleTextureID);
   }
@@ -145,9 +163,17 @@ namespace cat {
     DrawingData* draw = game->draw;
 
     Vec2 bottomLeft = player.position - player.size / 2.0;
-    // TODO: choose a texture based on which direction the player is heading in.
-    DrawTiledQuad(bottomLeft.x, bottomLeft.y, kPlayerZ, player.size.x, player.size.y,
-                  draw->playerFrontTextureID, 1, 1);
+
+    GLuint textureID;
+    switch (player.view) {
+      case ePlayerFront:
+        textureID = draw->playerFrontTextureID[player.powerUp];
+        break;
+      case ePlayerBack:
+        textureID = draw->playerBackTextureID[player.powerUp];
+        break;
+    }
+    DrawTiledQuad(bottomLeft.x, bottomLeft.y, kPlayerZ, player.size.x, player.size.y, textureID, 1, 1);
   }
 
 

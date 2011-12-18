@@ -18,7 +18,10 @@ namespace cat {
   PlayerData::PlayerData() :
     position(0.5, 0.5),
     size(0.02, 0.02),
-    livesRemaining(9)
+    livesRemaining(9),
+    powerUp(ePowerUpNone),
+    powerUpExpireTime(0),
+    view(ePlayerFront)
   {
   }
 

@@ -42,10 +42,29 @@ namespace cat {
   };
 
 
+  enum PowerUp {
+    ePowerUpNone,
+    ePowerUpSuperposition,  // Temporary invulnerability
+    ePowerUpEntangling,     // When the entanglement power up is launching.
+    ePowerUpEntanglement,   // Create a copy of yourself which matches your movement.
+
+    ePowerUpCount           // Sentinel value.
+  };
+
+
+  enum PlayerView {
+    ePlayerFront,
+    ePlayerBack
+  };
+
+
   struct PlayerData {
     Vec2 position;
     Vec2 size;
     int livesRemaining;
+    PowerUp powerUp;
+    double powerUpExpireTime;
+    PlayerView view;
 
     PlayerData();
   };

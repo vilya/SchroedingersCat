@@ -307,6 +307,7 @@ namespace cat {
       velocity = Unit(velocity) * kScale;
 
       player.position += velocity;
+      player.view = (velocity.y > 0) ? ePlayerBack : ePlayerFront;
 
       Vec2 bottomLeft = player.position - kRadius;
       Vec2 topRight = player.position + kRadius;
@@ -322,7 +323,20 @@ namespace cat {
         player.position.y = 1.0 - kRadius.y;
     }
 
-    // TODO: handle other player inputs.
+    // Check whether a power up is expiring.
+    switch (player.powerUp) {
+      case ePowerUpSuperposition:
+      case ePowerUpEntanglement:
+        if (game->gameTime >= player.powerUpExpireTime)
+          player.powerUp = ePowerUpNone;
+        break;
+      case ePowerUpEntangling:
+        if (game->gameTime >= player.powerUpExpireTime)
+          player.powerUp = ePowerUpEntanglement;
+        break;
+      default:
+        break;
+    }
   }
 
 
@@ -345,10 +359,16 @@ namespace cat {
         return;
       }
     }
+    if (game->gameState == eGameTitleScreen)
+      return;
 
     // Check for collisions between the player and the bullets.
     PlayerData& player = game->player;
     BulletData& bullets = game->particles;
+    if (player.powerUp == ePowerUpSuperposition)
+      return; // Not affected by collisions when superposed.
+
+    // TODO: add handling for the entanglement power up.
 
     const Vec2 kRadius = player.size / 2;
     const Vec2 kBulletRadius(bullets.bulletSize, bullets.bulletSize);
@@ -394,6 +414,8 @@ namespace cat {
   void StartNewLife(GameData* game)
   {
     game->player.position = Vec2(0.5, 0.5);
+    game->player.powerUp = ePowerUpSuperposition; // Temporary invulnerability when starting a new life.
+    game->player.powerUpExpireTime = game->gameTime + 2000.0;
   }
 
 
