@@ -25,23 +25,9 @@ namespace cat {
   // Types
   //
 
-  struct Shape {
-    GLsizei numVerts;
-    
-    GLuint vertBufferID;
-    GLuint textureID;
-
-    GLuint stride;
-    GLuint vertexOffset;
-    GLuint texCoordOffset;
-
-    Shape();
-    ~Shape();
-  };
-
-
   struct DrawingData {
-    Shape playArea;
+    GLuint floorTextureID;
+
     char* statusMessage;
 
     DrawingData();
@@ -56,29 +42,7 @@ namespace cat {
   GLuint UploadTexture(Image* img);
   GLuint UploadVerts(int numVerts, float* verts);
 
-  void DrawShape(Shape* shape);
-
-
-  //
-  // Shape public methods
-  //
-
-  Shape::Shape() :
-    numVerts(0),
-    vertBufferID(0),
-    textureID(0),
-    stride(0),
-    vertexOffset(0),
-    texCoordOffset(0)
-  {
-  }
-
-
-  Shape::~Shape()
-  {
-    if (vertBufferID)
-      glDeleteBuffers(1, &vertBufferID);
-  }
+  void DrawTiledQuad(double x, double y, double w, double h, GLuint textureID, double horizTiles, double vertTiles);
 
 
   //
@@ -86,35 +50,22 @@ namespace cat {
   //
 
   DrawingData::DrawingData() :
-    playArea(),
+    floorTextureID(0),
     statusMessage(NULL)
   {
-    float playAreaVerts[] = {
-      // x, y, u, v
-      0, 0, 0, 0,
-      1, 0, 4, 0,
-      1, 1, 4, 4,
-      0, 1, 0, 4
-    };
     Image* floor = LoadJPEG("resource/floor.jpg");
     assert(floor);
 
-    playArea.numVerts = 4;
-    playArea.vertBufferID = UploadVerts(4, playAreaVerts);
-    playArea.textureID = UploadTexture(floor);
-    playArea.stride = sizeof(playAreaVerts) / playArea.numVerts;
-    playArea.vertexOffset = 0;
-    playArea.texCoordOffset = sizeof(float) * 2;
+    floorTextureID = UploadTexture(floor);
 
     // Clean up.
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     delete floor;
   }
 
 
   DrawingData::~DrawingData()
   {
-    glDeleteTextures(1, &playArea.textureID);
+    glDeleteTextures(1, &floorTextureID);
   }
 
 
@@ -134,13 +85,14 @@ namespace cat {
     assert(game != NULL);
     assert(game->draw != NULL);
 
-    DrawShape(&game->draw->playArea);
+    DrawTiledQuad(0, 0, 1, 1, game->draw->floorTextureID, 4, 4);
   }
 
 
   void DrawBullets(GameData* game)
   {
-    // TODO
+    assert(game != NULL);
+    assert(game->draw != NULL);
   }
 
 
@@ -194,54 +146,27 @@ namespace cat {
   }
 
 
-  GLuint UploadVerts(int numVerts, float* verts)
+  void DrawTiledQuad(double x, double y, double w, double h, GLuint textureID, double horizTiles, double vertTiles)
   {
-    GLuint bufID;
-
-    glGenBuffers(1, &bufID);
-    glBindBuffer(GL_ARRAY_BUFFER, bufID);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numVerts, verts, GL_STATIC_DRAW);
-
-    // Clean up GL state.
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    return bufID;
-  }
-
-
-  void DrawShape(Shape* shape)
-  {
-    //glBindBuffer(GL_ARRAY_BUFFER, shape->vertBufferID);
-    glBindTexture(GL_TEXTURE_2D, shape->textureID);
-
+    glBindTexture(GL_TEXTURE_2D, textureID);
     glEnable(GL_TEXTURE_2D);
-    //glEnableClientState(GL_VERTEX_ARRAY);
-    //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    //glVertexPointer(2, GL_FLOAT, shape->stride, (const GLvoid*)shape->vertexOffset);
-    //glTexCoordPointer(2, GL_FLOAT, shape->stride, (const GLvoid*)shape->texCoordOffset);
-
-    //glDrawArrays(GL_TRIANGLE_FAN, 0, shape->numVerts);
 
     glBegin(GL_QUADS);
       glTexCoord2f(0, 0);
-      glVertex2f(0, 0);
+      glVertex2f(x, y);
 
-      glTexCoord2f(4, 0);
-      glVertex2f(1, 0);
+      glTexCoord2f(horizTiles, 0);
+      glVertex2f(x + w, y);
 
-      glTexCoord2f(4, 4);
-      glVertex2f(1, 1);
+      glTexCoord2f(horizTiles, vertTiles);
+      glVertex2f(x + w, y + h);
 
-      glTexCoord2f(0, 4);
-      glVertex2f(0, 1);
+      glTexCoord2f(0, vertTiles);
+      glVertex2f(x, y + h);
     glEnd();
 
     // Clean-up
     glDisable(GL_TEXTURE_2D);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
   }
 
