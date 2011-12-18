@@ -19,8 +19,8 @@ namespace cat {
   const char* kGameName = "Schroedinger's Cat: The Game";
   const char* kCopyrightMessage = "(c) Vilya Harvey, 2011";
 
-  static const int kWindowWidth = 640;
-  static const int kWindowHeight = 480;
+  static const int kWindowWidth = 800;
+  static const int kWindowHeight = 800;
 
   static const double kMinFrameTime = 1000.0 / 60.0; // Targetting 60 fps.
 
@@ -188,10 +188,11 @@ namespace cat {
     WindowData& win = game->window;
     PlayerData& player = game->player;
 
-    const double kScale = 0.03;
-    const Vec2 kRadius = player.size / 2.0;
-
+    // Handle player movement.
     if (win.leftPressed || win.rightPressed || win.upPressed || win.downPressed) {
+      const double kScale = 0.03;
+      const Vec2 kRadius = player.size / 2.0;
+
       Vec2 velocity;
       if (win.leftPressed)
         velocity.x -= 1;
@@ -218,6 +219,8 @@ namespace cat {
       else if (topRight.y > 1.0)
         player.position.y = 1.0 - kRadius.y;
     }
+
+    // TODO: handle other player inputs.
   }
 
 
