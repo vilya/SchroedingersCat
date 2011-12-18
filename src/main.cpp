@@ -102,6 +102,7 @@ namespace cat {
       break;
     case eGameOver:
       DrawPlayArea(gGameData);
+      DrawText(0, gGameData->window.height / 2.0f, "Game Over\nPress [space] to try again", eAlignCenter);
       break;
     }
 
@@ -122,8 +123,6 @@ namespace cat {
 
   void KeyPressed(unsigned char key, int x, int y)
   {
-    gGameData->window.keyPressed[key] = true;
-
     const unsigned char kEsc = 27;
     if (key == kEsc) {
       switch (gGameData->gameState) {
@@ -136,7 +135,7 @@ namespace cat {
       }
     }
     else {
-      fprintf(stderr, "key %d pressed\n", key);
+      gGameData->window.keyPressed[key] = true;
     }
   }
 
@@ -144,7 +143,6 @@ namespace cat {
   void KeyReleased(unsigned char key, int x, int y)
   {
     gGameData->window.keyPressed[key] = false;
-    fprintf(stderr, "key %d released\n", key);
   }
 
 
@@ -164,7 +162,6 @@ namespace cat {
         gGameData->window.downPressed = true;
         break;
       default:
-        fprintf(stderr, "special key %d pressed\n", key);
         break;
     }
   }
@@ -186,7 +183,6 @@ namespace cat {
         gGameData->window.downPressed = false;
         break;
       default:
-        fprintf(stderr, "special key %d released\n", key);
         break;
     }
   }

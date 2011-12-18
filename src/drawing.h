@@ -12,6 +12,18 @@ namespace cat {
 
 
   //
+  // Types
+  //
+
+  // Horizontal string alignment.
+  enum StringAlignment {
+    eAlignLeft,
+    eAlignRight,
+    eAlignCenter
+  };
+
+
+  //
   // Functions
   //
 
@@ -25,6 +37,8 @@ namespace cat {
   void DrawPlayer(GameData* game);
   void DrawEffects(GameData* game);
   
+  void DrawText(double x, double y, const char* text, StringAlignment alignment);
+
 } // namespace cat
 
 #endif // cat_drawing_h

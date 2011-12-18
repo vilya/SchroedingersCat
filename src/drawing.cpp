@@ -22,6 +22,7 @@ namespace cat {
   static const float kFloorZ = -1;
   static const float kPlayerZ = 0;
   static const float kBulletZ = -0.5;
+  static const float kTextZ = -0.1;
 
 
   //
@@ -48,6 +49,8 @@ namespace cat {
 
   void DrawTiledQuad(double x, double y, double z, double w, double h,
                      GLuint textureID, double horizTiles, double vertTiles);
+
+  float StringWidth(void* font, const char* text);
 
 
   //
@@ -205,6 +208,78 @@ namespace cat {
     // Clean-up
     glDisable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
+  }
+
+  
+  void DrawText(double x, double y, const char* text, StringAlignment alignment)
+  {
+    void* font = GLUT_BITMAP_HELVETICA_18;
+    float charHeight = 21;
+    float xPos = 0;
+    float yPos = 0;
+
+    switch (alignment) {
+      case eAlignRight:
+        x = gGameData->window.width - x - StringWidth(font, text);
+        break;
+      case eAlignCenter:
+        x = (gGameData->window.width - StringWidth(font, text)) / 2.0f;
+        break;
+      default:
+        break;
+    }
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0, gGameData->window.width, 0, gGameData->window.height, 0, 4);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(x, y, kTextZ);
+
+    for (char* ch = const_cast<char*>(text); *ch != '\0'; ++ch) {
+      glRasterPos2f(xPos, yPos);
+      switch (*ch) {
+        case '\n':
+          xPos = 0;
+          yPos -= charHeight;
+          break;
+        default:
+          glutBitmapCharacter(font, *ch);
+          xPos +=glutBitmapWidth(font, *ch);
+          break;
+      }
+    }
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+  }
+
+
+  float StringWidth(void* font, const char* text)
+  {
+    float maxWidth = 0;
+
+    float width = 0;
+    for (char* ch = const_cast<char*>(text); *ch; ++ch) {
+      switch (*ch) {
+        case '\n':
+          if (width > maxWidth)
+            maxWidth = width;
+          width = 0;
+          break;
+        default:
+          width += glutBitmapWidth(font, *ch);
+          break;
+      }
+    }
+    if (width > maxWidth)
+      maxWidth = width;
+    return maxWidth;
   }
 
 } // namespace cat
