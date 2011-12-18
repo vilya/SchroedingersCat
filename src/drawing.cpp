@@ -21,7 +21,7 @@ namespace cat {
 
   static const float kFloorZ = -1;
   static const float kPlayerZ = 0;
-  static const float kBulletZ = 2;
+  static const float kBulletZ = -0.5;
 
 
   //
