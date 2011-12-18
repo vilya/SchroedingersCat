@@ -400,9 +400,9 @@ namespace cat {
     game->gameState = eGamePlaying;
     game->gameTime = 0;
 
-    game->player.position = Vec2(0.5, 0.5);
     game->player.size = Vec2(0.04, 0.04);
     game->player.livesRemaining = 9;
+    StartNewLife(game);
 
     game->particles.count = 0;
     game->particles.bulletSize = 0.015;
