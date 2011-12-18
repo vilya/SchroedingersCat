@@ -7,6 +7,7 @@
 #include <GLUT/glut.h>
 #include <OpenGL/gl.h>
 
+#include "drawing.h"
 #include "gamedata.h"
 
 namespace cat {
@@ -18,8 +19,8 @@ namespace cat {
   const char* kGameName = "Schroedinger's Cat: The Game";
   const char* kCopyrightMessage = "(c) Vilya Harvey, 2011";
 
-  static const int kWindowWidth = 1024;
-  static const int kWindowHeight = 1024;
+  static const int kWindowWidth = 640;
+  static const int kWindowHeight = 480;
 
   static const double kMinFrameTime = 1000.0 / 60.0; // Targetting 60 fps.
 
@@ -28,25 +29,25 @@ namespace cat {
   // Forward declarations
   //
 
-  void start();
-  void render();
-  void resize(int x, int y);
-  void keyPressed(unsigned char key, int x, int y);
-  void keyReleased(unsigned char key, int x, int y);
-  void specialKeyPressed(int key, int x, int y);
-  void specialKeyReleased(int key, int x, int y);
-  void mainLoop();
+  void Start();
+  void Render();
+  void Resize(int x, int y);
+  void KeyPressed(unsigned char key, int x, int y);
+  void KeyReleased(unsigned char key, int x, int y);
+  void SpecialKeyPressed(int key, int x, int y);
+  void SpecialKeyReleased(int key, int x, int y);
+  void MainLoop();
 
   // Get the current system time in milliseconds (may include a fraction of a millisecond).
-  double now();
-  void sleepFor(double milliseconds);
+  double Now();
+  void SleepFor(double milliseconds);
 
 
   //
   // Functions
   //
 
-  void start()
+  void Start()
   {
     int argc = 0;
     char* argv[] = { NULL };
@@ -57,40 +58,53 @@ namespace cat {
     glutInitWindowSize(kWindowWidth, kWindowHeight);
     glutCreateWindow(kGameName);
 
-    glutDisplayFunc(render);
-    glutReshapeFunc(resize);
-    glutKeyboardFunc(keyPressed);
-    glutKeyboardUpFunc(keyReleased);
-    glutSpecialFunc(specialKeyPressed);
-    glutSpecialUpFunc(specialKeyReleased);
-    glutIdleFunc(mainLoop);
+    glutDisplayFunc(Render);
+    glutReshapeFunc(Resize);
+    glutKeyboardFunc(KeyPressed);
+    glutKeyboardUpFunc(KeyReleased);
+    glutSpecialFunc(SpecialKeyPressed);
+    glutSpecialUpFunc(SpecialKeyReleased);
+    glutIdleFunc(MainLoop);
+
+    InitDrawing(gGameData);
 
     glutMainLoop(); // This doesn't return until the main window closes.
   }
 
 
-  void render()
+  void Render()
   {
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // TODO: drawPlayArea();
-    // TODO: drawParticles();
-    // TODO: drawPlayer();
-    // TODO: drawEffects();
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, 1, 0, 1, 0, 4);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    DrawPlayArea(gGameData);
+    DrawBullets(gGameData);
+    DrawPlayer(gGameData);
+    DrawEffects(gGameData);
 
     glutSwapBuffers();
   }
 
 
-  void resize(int width, int height)
+  void Resize(int width, int height)
   {
+    if (gGameData) {
+      gGameData->window.width = width;
+      gGameData->window.height = height;
+    }
     glViewport(0, 0, width, height);
     glutPostRedisplay();
   }
 
 
-  void keyPressed(unsigned char key, int x, int y)
+  void KeyPressed(unsigned char key, int x, int y)
   {
     const unsigned char kEsc = 27;
     if (key == kEsc)
@@ -100,40 +114,40 @@ namespace cat {
   }
 
 
-  void keyReleased(unsigned char key, int x, int y)
+  void KeyReleased(unsigned char key, int x, int y)
   {
     fprintf(stderr, "key %d released\n", key);
   }
 
 
-  void specialKeyPressed(int key, int x, int y)
+  void SpecialKeyPressed(int key, int x, int y)
   {
     fprintf(stderr, "special key %d pressed\n", key);
   }
 
 
-  void specialKeyReleased(int key, int x, int y)
+  void SpecialKeyReleased(int key, int x, int y)
   {
     fprintf(stderr, "special key %d released\n", key);
   }
 
 
-  void mainLoop()
+  void MainLoop()
   {
-    double frameStartTime = now();
+    double frameStartTime = Now();
 
     // TODO: Calculations for the current frame.
 
-    double frameEndTime = now();
+    double frameEndTime = Now();
     double frameTime = frameEndTime - frameStartTime;
     if (frameTime < kMinFrameTime)
-      sleepFor(kMinFrameTime - frameTime);
+      SleepFor(kMinFrameTime - frameTime);
 
     glutPostRedisplay();
   }
 
 
-  double now()
+  double Now()
   {
     struct timeval t;
     gettimeofday(&t, NULL);
@@ -143,7 +157,7 @@ namespace cat {
   }
 
 
-  void sleepFor(double milliseconds)
+  void SleepFor(double milliseconds)
   {
     usleep((useconds_t)(milliseconds * 1000));
   }
@@ -155,7 +169,7 @@ int main(int argc, char** argv)
   printf("%s\n", cat::kGameName);
   printf("%s\n", cat::kCopyrightMessage);
 
-  cat::initGameData();
-  cat::start();
+  cat::InitGameData();
+  cat::Start();
 }
 

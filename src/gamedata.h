@@ -13,6 +13,8 @@ namespace cat {
   struct PlayerData;
   struct BulletData;
 
+  struct DrawingData; // Opaque structure used as a cache for graphics data; see drawing.cpp for details.
+
 
   //
   // Constants
@@ -52,14 +54,26 @@ namespace cat {
   };
 
 
+  struct WindowData {
+    int width;
+    int height;
+
+    WindowData();
+  };
+
+
   struct GameData {
     // The current elapsed time for the game. We can't just use the system
     // time, because we need to be able to pause it.
-    double t;
+    double gameTime;
     // Player state.
     PlayerData player;
     // Bullet state.
     BulletData particles;
+    // Data about the game window.
+    WindowData window;
+    // Cached drawing data.
+    DrawingData* draw;
 
     GameData();
   };
@@ -71,7 +85,7 @@ namespace cat {
 
   // Creates and initialises the global game data instance. You must call this
   // before you use the gGameData pointer. You should only call it once.
-  void initGameData();
+  void InitGameData();
 
 } // namespace cat
 

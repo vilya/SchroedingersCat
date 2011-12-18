@@ -4,15 +4,18 @@ OBJ := $(BUILD)/obj
 BIN := bin
 
 CC = g++
-CCFLAGS = -Wall -g
+CCFLAGS = -Wall -g -I/opt/local/include
 LD = g++
-LDFLAGS = 
-LIBS = -framework OpenGL -framework GLUT
+LDFLAGS = -L/opt/local/lib
+LIBS = -framework OpenGL -framework GLUT -ljpeg
 
 
 OBJS = \
+	$(OBJ)/drawing.o \
 	$(OBJ)/gamedata.o \
+	$(OBJ)/image.o \
 	$(OBJ)/main.o \
+	$(OBJ)/shader.o \
 	$(OBJ)/vec2.o
 
 

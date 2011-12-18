@@ -35,8 +35,8 @@ namespace cat {
   // Functions
   //
 
-  double dot(const Vec2& a, const Vec2& b);
-  Vec2 reflect(const Vec2& in, const Vec2& normal);
+  double Dot(const Vec2& a, const Vec2& b);
+  Vec2 Reflect(const Vec2& in, const Vec2& normal);
 
 
 } // namespace cat

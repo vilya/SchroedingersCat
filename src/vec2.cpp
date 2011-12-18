@@ -83,15 +83,15 @@ namespace cat {
   // Functions
   //
 
-  double dot(const Vec2& a, const Vec2& b)
+  double Dot(const Vec2& a, const Vec2& b)
   {
     return a.x * b.x + a.y * b.y;
   }
 
 
-  Vec2 reflect(const Vec2& in, const Vec2& normal)
+  Vec2 Reflect(const Vec2& in, const Vec2& normal)
   {
-    return in - 2.0 * dot(in, normal) * normal;
+    return in - 2.0 * Dot(in, normal) * normal;
   }
 
 } // namespace cat

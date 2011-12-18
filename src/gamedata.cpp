@@ -33,13 +33,26 @@ namespace cat {
 
 
   //
+  // WindowData public methods
+  //
+
+  WindowData::WindowData() :
+    width(0),
+    height(0)
+  {
+  }
+
+
+  //
   // GameData public methods
   //
 
   GameData::GameData() :
-    t(0),
+    gameTime(0),
     player(),
-    particles()
+    particles(),
+    window(),
+    draw(NULL)
   {
   }
 
@@ -48,7 +61,7 @@ namespace cat {
   // Functions
   //
 
-  void initGameData()
+  void InitGameData()
   {
     assert(gGameData == NULL);
     gGameData = new GameData();
