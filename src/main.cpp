@@ -402,6 +402,8 @@ namespace cat {
 
     game->player.size = Vec2(0.04, 0.04);
     game->player.livesRemaining = 9;
+    game->player.superpositionsRemaining = 3;
+    game->player.entanglementsRemaining = 1;
     StartNewLife(game);
 
     game->particles.count = 0;
