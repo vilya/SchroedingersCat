@@ -1,5 +1,4 @@
-* Title screen
-* Respawn logic for when you run into a particle (brief - 1 second? - period of invulnerability after respawn).
-* Work on the game logic (rate at which particles spawn, particle movement & reflection).
 * Add special player abilities.
-* High score list
+* Add special collectible particles as a way to replenish power ups.
+* Add the gas canisters.
+* High score table.
