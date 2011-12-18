@@ -110,10 +110,8 @@ namespace cat {
     PlayerData& player = game->player;
     DrawingData* draw = game->draw;
 
-    double playerRadius = 0.02;
-
-    DrawTiledQuad(player.position.x - playerRadius, player.position.y - playerRadius, kPlayerZ,
-                  2 * playerRadius, 2 * playerRadius,
+    Vec2 bottomLeft = player.position - player.size / 2.0;
+    DrawTiledQuad(bottomLeft.x, bottomLeft.y, kPlayerZ, player.size.x, player.size.y,
                   draw->playerTextureID, 1, 1);
   }
 

@@ -37,6 +37,7 @@ namespace cat {
 
   struct PlayerData {
     Vec2 position;
+    Vec2 size;
     int livesRemaining;
 
     PlayerData();

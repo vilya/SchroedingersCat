@@ -189,6 +189,7 @@ namespace cat {
     PlayerData& player = game->player;
 
     const double kScale = 0.03;
+    const Vec2 kRadius = player.size / 2.0;
 
     if (win.leftPressed || win.rightPressed || win.upPressed || win.downPressed) {
       Vec2 velocity;
@@ -203,6 +204,19 @@ namespace cat {
       velocity = Unit(velocity) * kScale;
 
       player.position += velocity;
+
+      Vec2 bottomLeft = player.position - kRadius;
+      Vec2 topRight = player.position + kRadius;
+
+      if (bottomLeft.x < 0.0)
+        player.position.x = kRadius.x;
+      else if (topRight.x > 1.0)
+        player.position.x = 1.0 - kRadius.x;
+
+      if (bottomLeft.y < 0.0)
+        player.position.y = kRadius.y;
+      else if (topRight.y > 1.0)
+        player.position.y = 1.0 - kRadius.y;
     }
   }
 
