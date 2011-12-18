@@ -204,11 +204,29 @@ namespace cat {
   }
 
 
+  void DrawTitles(GameData* game)
+  {
+    assert(game != NULL);
+    assert(game->draw != NULL);
+
+    int lines = 6;
+    float y = (gGameData->window.height + lines * kCharHeight) / 2.0f;
+
+    DrawText(0, y, "Schroedinger's Cat: The Game", eAlignCenter);
+    y -= kCharHeight;
+    DrawText(0, y, "(c) Vilya Harvey, 2011", eAlignCenter);
+    y -= kCharHeight * 2;
+    DrawText(0, y, "Made unofficially for Ludum Dare 22", eAlignCenter);
+    y -= kCharHeight * 2;
+    DrawText(0, y, "Press [space] to start, [esc] to quit", eAlignCenter);
+  }
+
+
   void DrawGameOver(GameData* game)
   {
     assert(game != NULL);
     assert(game->draw != NULL);
-    DrawText(0, gGameData->window.height / 2.0f, "GAME OVER\nPress [space] to try again", eAlignCenter);
+    DrawText(0, gGameData->window.height / 2.0f, "GAME OVER\nPress [space] to try again, [esc] to quit", eAlignCenter);
   }
 
 

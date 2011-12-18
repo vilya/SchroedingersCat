@@ -25,6 +25,7 @@ namespace cat {
   void DrawPlayer(GameData* game);
   void DrawEffects(GameData* game);
   void DrawHUD(GameData* game);
+  void DrawTitles(GameData* game);
   void DrawGameOver(GameData* game);
 
 } // namespace cat

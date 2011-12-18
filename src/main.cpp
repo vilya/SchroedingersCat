@@ -47,6 +47,8 @@ namespace cat {
   void StartNewGame(GameData* game);
   void StartNewLife(GameData* game);
 
+  void SetGameState(GameData* game, GameState state);
+
   // Get the current system time in milliseconds (may include a fraction of a millisecond).
   double Now();
   void SleepFor(double milliseconds);
@@ -94,6 +96,10 @@ namespace cat {
     glLoadIdentity();
 
     switch (gGameData->gameState) {
+    case eGameTitleScreen:
+      DrawPlayArea(gGameData);
+      DrawTitles(gGameData);
+      break;
     case eGamePlaying:
       DrawPlayArea(gGameData);
       DrawBullets(gGameData);
@@ -210,10 +216,8 @@ namespace cat {
     if (frameTime < kMinFrameTime)
       SleepFor(kMinFrameTime - frameTime);
 
-    if (gGameData->gameState == eGamePlaying) {
-      frameEndTime = Now();
-      gGameData->gameTime += (frameEndTime - frameStartTime);
-    }
+    frameEndTime = Now();
+    gGameData->gameTime += (frameEndTime - frameStartTime);
 
     glutPostRedisplay();
   }
@@ -326,14 +330,20 @@ namespace cat {
   {
     assert(game != NULL);
 
-    if (game->gameState == eGameOver) {
+    if (game->gameState == eGameOver || game->gameState == eGameTitleScreen) {
       for (int i = 0; i < 256; ++i) {
         if (game->window.keyPressed[i]) {
           StartNewGame(game);
-          break;
+          return;
         }
       }
-      return;
+    }
+    if (game->gameState == eGameOver) {
+      float elapsed = game->gameTime - game->stateChangeTime;
+      if (elapsed >= 5000) {
+        SetGameState(game, eGameTitleScreen);
+        return;
+      }
     }
 
     // Check for collisions between the player and the bullets.
@@ -357,7 +367,7 @@ namespace cat {
 
       --player.livesRemaining;
       if (player.livesRemaining <= 0)
-        game->gameState = eGameOver;
+        SetGameState(game, eGameOver);
       else
         StartNewLife(game);
     }
@@ -366,6 +376,7 @@ namespace cat {
 
   void StartNewGame(GameData* game)
   {
+    SetGameState(game, eGamePlaying);
     game->gameState = eGamePlaying;
     game->gameTime = 0;
 
@@ -383,6 +394,13 @@ namespace cat {
   void StartNewLife(GameData* game)
   {
     game->player.position = Vec2(0.5, 0.5);
+  }
+
+
+  void SetGameState(GameData* game, GameState state)
+  {
+    game->gameState = state;
+    game->stateChangeTime = game->gameTime;
   }
 
 

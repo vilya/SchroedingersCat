@@ -36,6 +36,7 @@ namespace cat {
   //
 
   enum GameState {
+    eGameTitleScreen,
     eGamePlaying,
     eGameOver
   };
@@ -85,6 +86,8 @@ namespace cat {
     // The current elapsed time for the game. We can't just use the system
     // time, because we need to be able to pause it.
     double gameTime;
+    // The time at which the game state changed to its current value.
+    double stateChangeTime;
     // Player state.
     PlayerData player;
     // Bullet state.
