@@ -1,5 +1,7 @@
 #include "vec2.h"
 
+#include <cmath>
+
 namespace cat {
 
   //
@@ -24,6 +26,22 @@ namespace cat {
     x(v.x),
     y(v.y)
   {
+  }
+
+
+  const Vec2& Vec2::operator += (const Vec2& v)
+  {
+    x += v.x;
+    y += v.y;
+    return *this;
+  }
+
+
+  const Vec2& Vec2::operator -= (const Vec2& v)
+  {
+    x -= v.x;
+    y -= v.y;
+    return *this;
   }
 
 
@@ -92,6 +110,24 @@ namespace cat {
   Vec2 Reflect(const Vec2& in, const Vec2& normal)
   {
     return in - 2.0 * Dot(in, normal) * normal;
+  }
+
+
+  double LengthSqr(const Vec2& in)
+  {
+    return in.x * in.x + in.y * in.y;
+  }
+
+
+  double Length(const Vec2& in)
+  {
+    return sqrt(LengthSqr(in));
+  }
+
+
+  Vec2 Unit(const Vec2& in)
+  {
+    return in / Length(in);
   }
 
 } // namespace cat
