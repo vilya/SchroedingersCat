@@ -20,6 +20,10 @@ namespace cat {
   static const GLuint kVertexAttrib = 0;
   static const GLuint kTexCoordAttrib = 1;
 
+  static const float kFloorZ = -1;
+  static const float kPlayerZ = 0;
+  static const float kBulletZ = 2;
+
 
   //
   // Types
@@ -27,6 +31,7 @@ namespace cat {
 
   struct DrawingData {
     GLuint floorTextureID;
+    GLuint playerTextureID;
 
     char* statusMessage;
 
@@ -42,7 +47,8 @@ namespace cat {
   GLuint UploadTexture(Image* img);
   GLuint UploadVerts(int numVerts, float* verts);
 
-  void DrawTiledQuad(double x, double y, double w, double h, GLuint textureID, double horizTiles, double vertTiles);
+  void DrawTiledQuad(double x, double y, double z, double w, double h,
+                     GLuint textureID, double horizTiles, double vertTiles);
 
 
   //
@@ -51,21 +57,29 @@ namespace cat {
 
   DrawingData::DrawingData() :
     floorTextureID(0),
+    playerTextureID(0),
     statusMessage(NULL)
   {
+    // Load the floor texture.
     Image* floor = LoadJPEG("resource/floor.jpg");
     assert(floor);
-
     floorTextureID = UploadTexture(floor);
-
-    // Clean up.
     delete floor;
+
+    // Load the player texture.
+    // Image* player = LoadJPEG("resource/player.jpg");
+    // assert(player);
+    // playerTextureID = UploadTexture(player);
+    // delete player;
   }
 
 
   DrawingData::~DrawingData()
   {
-    glDeleteTextures(1, &floorTextureID);
+    if (floorTextureID)
+      glDeleteTextures(1, &floorTextureID);
+    if (playerTextureID)
+      glDeleteTextures(1, &playerTextureID);
   }
 
 
@@ -85,7 +99,23 @@ namespace cat {
     assert(game != NULL);
     assert(game->draw != NULL);
 
-    DrawTiledQuad(0, 0, 1, 1, game->draw->floorTextureID, 4, 4);
+    DrawTiledQuad(0, 0, kFloorZ, 1, 1, game->draw->floorTextureID, 4, 4);
+  }
+
+
+  void DrawPlayer(GameData* game)
+  {
+    assert(game != NULL);
+    assert(game->draw != NULL);
+
+    PlayerData& player = game->player;
+    DrawingData* draw = game->draw;
+
+    double playerRadius = 0.02;
+
+    DrawTiledQuad(player.position.x - playerRadius, player.position.y - playerRadius, kPlayerZ,
+                  2 * playerRadius, 2 * playerRadius,
+                  draw->playerTextureID, 1, 1);
   }
 
 
@@ -96,14 +126,10 @@ namespace cat {
   }
 
 
-  void DrawPlayer(GameData* game)
-  {
-    // TODO
-  }
-
-
   void DrawEffects(GameData* game)
   {
+    assert(game != NULL);
+    assert(game->draw != NULL);
     // TODO
   }
 
@@ -146,23 +172,23 @@ namespace cat {
   }
 
 
-  void DrawTiledQuad(double x, double y, double w, double h, GLuint textureID, double horizTiles, double vertTiles)
+  void DrawTiledQuad(double x, double y, double z, double w, double h, GLuint textureID, double horizTiles, double vertTiles)
   {
     glBindTexture(GL_TEXTURE_2D, textureID);
     glEnable(GL_TEXTURE_2D);
 
     glBegin(GL_QUADS);
       glTexCoord2f(0, 0);
-      glVertex2f(x, y);
+      glVertex3d(x, y, z);
 
       glTexCoord2f(horizTiles, 0);
-      glVertex2f(x + w, y);
+      glVertex3d(x + w, y, z);
 
       glTexCoord2f(horizTiles, vertTiles);
-      glVertex2f(x + w, y + h);
+      glVertex3d(x + w, y + h, z);
 
       glTexCoord2f(0, vertTiles);
-      glVertex2f(x, y + h);
+      glVertex3d(x, y + h, z);
     glEnd();
 
     // Clean-up

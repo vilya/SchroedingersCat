@@ -16,7 +16,7 @@ namespace cat {
   //
 
   PlayerData::PlayerData() :
-    position(),
+    position(0.5, 0.5),
     livesRemaining(9)
   {
   }
