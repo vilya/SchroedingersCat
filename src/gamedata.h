@@ -65,6 +65,8 @@ namespace cat {
     PowerUp powerUp;
     double powerUpExpireTime;
     PlayerView view;
+    int superpositionsRemaining;
+    int entanglementsRemaining;
 
     PlayerData();
   };

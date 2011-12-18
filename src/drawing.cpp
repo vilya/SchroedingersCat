@@ -218,6 +218,7 @@ namespace cat {
     WindowData& win = game->window;
 
     float top = win.height - kCharHeight - 10;
+    float bottom = 10 + kCharHeight;
     char msg[1024];
 
     snprintf(msg, 1024, "Survived %1.2fs", game->gameTime / 1000.0);
@@ -225,6 +226,11 @@ namespace cat {
 
     snprintf(msg, 1024, "%d lives", game->player.livesRemaining);
     DrawText(10, top, msg, eAlignRight);
+
+    snprintf(msg, 1024, "Superposition: %d\nEntanglement: %d",
+             game->player.superpositionsRemaining,
+             game->player.entanglementsRemaining);
+    DrawText(10, bottom, msg, eAlignLeft);
   }
 
 

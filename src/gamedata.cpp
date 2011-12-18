@@ -21,7 +21,9 @@ namespace cat {
     livesRemaining(9),
     powerUp(ePowerUpNone),
     powerUpExpireTime(0),
-    view(ePlayerFront)
+    view(ePlayerFront),
+    superpositionsRemaining(0),
+    entanglementsRemaining(0)
   {
   }
 
