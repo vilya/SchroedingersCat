@@ -127,7 +127,11 @@ namespace cat {
 
   Vec2 Unit(const Vec2& in)
   {
-    return in / Length(in);
+    double length = Length(in);
+    if (length > 0)
+      return in / Length(in);
+    else
+      return in;
   }
 
 } // namespace cat
