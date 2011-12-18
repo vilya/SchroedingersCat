@@ -58,6 +58,12 @@ namespace cat {
     int width;
     int height;
 
+    bool keyPressed[256];
+    bool leftPressed;
+    bool rightPressed;
+    bool upPressed;
+    bool downPressed;
+
     WindowData();
   };
 

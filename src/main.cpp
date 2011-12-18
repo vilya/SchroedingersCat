@@ -38,6 +38,8 @@ namespace cat {
   void SpecialKeyReleased(int key, int x, int y);
   void MainLoop();
 
+  void UpdatePlayer(GameData* game);
+
   // Get the current system time in milliseconds (may include a fraction of a millisecond).
   double Now();
   void SleepFor(double milliseconds);
@@ -122,13 +124,45 @@ namespace cat {
 
   void SpecialKeyPressed(int key, int x, int y)
   {
-    fprintf(stderr, "special key %d pressed\n", key);
+    switch (key) {
+      case GLUT_KEY_LEFT:
+        gGameData->window.leftPressed = true;
+        break;
+      case GLUT_KEY_RIGHT:
+        gGameData->window.rightPressed = true;
+        break;
+      case GLUT_KEY_UP:
+        gGameData->window.upPressed = true;
+        break;
+      case GLUT_KEY_DOWN:
+        gGameData->window.downPressed = true;
+        break;
+      default:
+        fprintf(stderr, "special key %d pressed\n", key);
+        break;
+    }
   }
 
 
   void SpecialKeyReleased(int key, int x, int y)
   {
-    fprintf(stderr, "special key %d released\n", key);
+    switch (key) {
+      case GLUT_KEY_LEFT:
+        gGameData->window.leftPressed = false;
+        break;
+      case GLUT_KEY_RIGHT:
+        gGameData->window.rightPressed = false;
+        break;
+      case GLUT_KEY_UP:
+        gGameData->window.upPressed = false;
+        break;
+      case GLUT_KEY_DOWN:
+        gGameData->window.downPressed = false;
+        break;
+      default:
+        fprintf(stderr, "special key %d released\n", key);
+        break;
+    }
   }
 
 
@@ -137,6 +171,8 @@ namespace cat {
     double frameStartTime = Now();
 
     // TODO: Calculations for the current frame.
+    // TODO: UpdateBullets(gGameData);
+    UpdatePlayer(gGameData);
 
     double frameEndTime = Now();
     double frameTime = frameEndTime - frameStartTime;
@@ -144,6 +180,30 @@ namespace cat {
       SleepFor(kMinFrameTime - frameTime);
 
     glutPostRedisplay();
+  }
+
+
+  void UpdatePlayer(GameData* game)
+  {
+    WindowData& win = game->window;
+    PlayerData& player = game->player;
+
+    const double kScale = 0.03;
+
+    if (win.leftPressed || win.rightPressed || win.upPressed || win.downPressed) {
+      Vec2 velocity;
+      if (win.leftPressed)
+        velocity.x -= 1;
+      if (win.rightPressed)
+        velocity.x += 1;
+      if (win.upPressed)
+        velocity.y += 1;
+      if (win.downPressed)
+        velocity.y -= 1;
+      velocity = Unit(velocity) * kScale;
+
+      player.position += velocity;
+    }
   }
 
 
