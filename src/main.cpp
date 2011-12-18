@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <sys/time.h>
@@ -38,6 +39,7 @@ namespace cat {
   void SpecialKeyReleased(int key, int x, int y);
   void MainLoop();
 
+  void UpdateBullets(GameData* game);
   void UpdatePlayer(GameData* game);
 
   // Get the current system time in milliseconds (may include a fraction of a millisecond).
@@ -170,8 +172,8 @@ namespace cat {
   {
     double frameStartTime = Now();
 
-    // TODO: Calculations for the current frame.
-    // TODO: UpdateBullets(gGameData);
+    // Calculations for the current frame.
+    UpdateBullets(gGameData);
     UpdatePlayer(gGameData);
 
     double frameEndTime = Now();
@@ -179,7 +181,57 @@ namespace cat {
     if (frameTime < kMinFrameTime)
       SleepFor(kMinFrameTime - frameTime);
 
+    frameEndTime = Now();
+    gGameData->gameTime += (frameEndTime - frameStartTime);
+
     glutPostRedisplay();
+  }
+
+
+  void UpdateBullets(GameData* game)
+  {
+    BulletData& bullets = game->particles;
+
+    Vec2 bottomLeft(bullets.bulletSize, bullets.bulletSize);
+    Vec2 topRight(1.0 - bullets.bulletSize, 1.0 - bullets.bulletSize);
+
+    // Expire bullets?
+
+    // Move bullets
+    for (unsigned int i = 0; i < bullets.count; ++i) {
+      Vec2 pos = bullets.position[i];
+      Vec2 vel = bullets.velocity[i];
+
+      pos += vel;
+      
+      if (pos.x < bottomLeft.x)
+        pos.x = bottomLeft.x + (bottomLeft.x - pos.x);
+      else if (pos.x > topRight.x)
+        pos.x = topRight.x - (pos.x - topRight.x);
+
+      if (pos.y < bottomLeft.y)
+        pos.y = bottomLeft.y + (bottomLeft.y - pos.y);
+      else if (pos.y > topRight.y)
+        pos.y = topRight.y - (pos.y - topRight.y);
+    }
+
+    // Emit new bullets
+    while (bullets.count < kMaxBullets && game->gameTime >= bullets.lastEmit + bullets.halfLife) {
+      bullets.lastEmit += bullets.halfLife;
+      bullets.halfLife = pow(bullets.halfLife, 0.999);
+
+      // Random emit position anywhere in the play area.
+      bullets.position[bullets.count] = Vec2(drand48(), drand48());
+
+      // Random velocity with length between 0.005 and 0.01.
+      bullets.velocity[bullets.count] = Unit(Vec2(drand48(), drand48())) * 0.005 + Vec2(0.005, 0.005);
+
+      bullets.launchTime[bullets.count] = bullets.lastEmit;
+      bullets.flags[bullets.count] = 0;
+
+      ++bullets.count;
+      fprintf(stderr, "%u bullets\n", bullets.count);
+    }
   }
 
 

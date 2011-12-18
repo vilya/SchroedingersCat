@@ -120,6 +120,20 @@ namespace cat {
   {
     assert(game != NULL);
     assert(game->draw != NULL);
+
+    BulletData& bullets = game->particles;
+    WindowData& win = game->window;
+
+    GLfloat bulletSize = win.width * bullets.bulletSize;
+    if (bulletSize < 1)
+      bulletSize = 1;
+    glPointSize(bulletSize);
+
+    glBegin(GL_POINTS);
+    for (unsigned int i = 0; i < bullets.count; ++i) {
+      glVertex3d(bullets.position[i].x, bullets.position[i].y, kBulletZ);
+    }
+    glEnd();
   }
 
 

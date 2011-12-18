@@ -21,7 +21,7 @@ namespace cat {
   //
 
   // Maximum number of bullets that can be live at any one time.
-  static const int kMaxBullets = 10000;
+  static const unsigned int kMaxBullets = 10000;
 
 
   //
@@ -46,6 +46,10 @@ namespace cat {
 
   struct BulletData {
     unsigned int count;
+    double bulletSize;
+    double lastEmit;
+    double halfLife;
+
     Vec2 position[kMaxBullets];
     Vec2 velocity[kMaxBullets];
     double launchTime[kMaxBullets];

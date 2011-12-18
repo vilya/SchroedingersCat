@@ -28,7 +28,10 @@ namespace cat {
   //
 
   BulletData::BulletData() :
-    count(0)
+    count(0),
+    bulletSize(0.01),
+    lastEmit(0),
+    halfLife(1000.0)
   {
   }
 
