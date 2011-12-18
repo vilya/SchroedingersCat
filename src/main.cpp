@@ -99,10 +99,11 @@ namespace cat {
       DrawBullets(gGameData);
       DrawPlayer(gGameData);
       DrawEffects(gGameData);
+      DrawHUD(gGameData);
       break;
     case eGameOver:
       DrawPlayArea(gGameData);
-      DrawText(0, gGameData->window.height / 2.0f, "Game Over\nPress [space] to try again", eAlignCenter);
+      DrawGameOver(gGameData);
       break;
     }
 
@@ -369,11 +370,11 @@ namespace cat {
     game->gameTime = 0;
 
     game->player.position = Vec2(0.5, 0.5);
-    game->player.size = Vec2(0.02, 0.02);
+    game->player.size = Vec2(0.04, 0.04);
     game->player.livesRemaining = 9;
 
     game->particles.count = 0;
-    game->particles.bulletSize = 0.01;
+    game->particles.bulletSize = 0.015;
     game->particles.lastEmit = 0;
     game->particles.halfLife = 1000.0;
   }

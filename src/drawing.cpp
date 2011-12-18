@@ -24,14 +24,26 @@ namespace cat {
   static const float kBulletZ = -0.5;
   static const float kTextZ = -0.1;
 
+  static const float kCharHeight = 21;
+
 
   //
   // Types
   //
 
+  // Horizontal string alignment.
+  enum StringAlignment {
+    eAlignLeft,
+    eAlignRight,
+    eAlignCenter
+  };
+
+
   struct DrawingData {
     GLuint floorTextureID;
-    GLuint playerTextureID;
+    GLuint playerFrontTextureID;
+    GLuint playerBackTextureID;
+    GLuint particleTextureID;
 
     char* statusMessage;
 
@@ -49,6 +61,7 @@ namespace cat {
 
   void DrawTiledQuad(double x, double y, double z, double w, double h,
                      GLuint textureID, double horizTiles, double vertTiles);
+  void DrawText(double x, double y, const char* text, StringAlignment alignment);
 
   float StringWidth(void* font, const char* text);
 
@@ -59,7 +72,9 @@ namespace cat {
 
   DrawingData::DrawingData() :
     floorTextureID(0),
-    playerTextureID(0),
+    playerFrontTextureID(0),
+    playerBackTextureID(0),
+    particleTextureID(0),
     statusMessage(NULL)
   {
     // Load the floor texture.
@@ -68,11 +83,22 @@ namespace cat {
     floorTextureID = UploadTexture(floor);
     delete floor;
 
-    // Load the player texture.
-    // Image* player = LoadJPEG("resource/player.jpg");
-    // assert(player);
-    // playerTextureID = UploadTexture(player);
-    // delete player;
+    // Load the player textures.
+    Image* playerFront = LoadJPEG("resource/player_front.jpg");
+    assert(playerFront);
+    playerFrontTextureID = UploadTexture(playerFront);
+    delete playerFront;
+
+    Image* playerBack = LoadJPEG("resource/player_back.jpg");
+    assert(playerBack);
+    playerBackTextureID = UploadTexture(playerBack);
+    delete playerBack;
+
+    // Load the particle textures.
+    Image* particle = LoadJPEG("resource/particle.jpg");
+    assert(particle);
+    particleTextureID = UploadTexture(particle);
+    delete particle;
   }
 
 
@@ -80,8 +106,10 @@ namespace cat {
   {
     if (floorTextureID)
       glDeleteTextures(1, &floorTextureID);
-    if (playerTextureID)
-      glDeleteTextures(1, &playerTextureID);
+    if (playerFrontTextureID)
+      glDeleteTextures(1, &playerFrontTextureID);
+    if (playerBackTextureID)
+      glDeleteTextures(1, &playerBackTextureID);
   }
 
 
@@ -114,8 +142,9 @@ namespace cat {
     DrawingData* draw = game->draw;
 
     Vec2 bottomLeft = player.position - player.size / 2.0;
+    // TODO: choose a texture based on which direction the player is heading in.
     DrawTiledQuad(bottomLeft.x, bottomLeft.y, kPlayerZ, player.size.x, player.size.y,
-                  draw->playerTextureID, 1, 1);
+                  draw->playerFrontTextureID, 1, 1);
   }
 
 
@@ -132,11 +161,19 @@ namespace cat {
       bulletSize = 1;
     glPointSize(bulletSize);
 
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_POINT_SPRITE);
+    glBindTexture(GL_TEXTURE_2D, game->draw->particleTextureID);
+    glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+
     glBegin(GL_POINTS);
     for (unsigned int i = 0; i < bullets.count; ++i) {
       glVertex3d(bullets.position[i].x, bullets.position[i].y, kBulletZ);
     }
     glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
   }
 
 
@@ -145,6 +182,22 @@ namespace cat {
     assert(game != NULL);
     assert(game->draw != NULL);
     // TODO
+  }
+
+
+  void DrawHUD(GameData* game)
+  {
+    assert(game != NULL);
+    assert(game->draw != NULL);
+    // TODO
+  }
+
+
+  void DrawGameOver(GameData* game)
+  {
+    assert(game != NULL);
+    assert(game->draw != NULL);
+    DrawText(0, gGameData->window.height / 2.0f, "GAME OVER\nPress [space] to try again", eAlignCenter);
   }
 
 
@@ -214,7 +267,6 @@ namespace cat {
   void DrawText(double x, double y, const char* text, StringAlignment alignment)
   {
     void* font = GLUT_BITMAP_HELVETICA_18;
-    float charHeight = 21;
     float xPos = 0;
     float yPos = 0;
 
@@ -244,7 +296,7 @@ namespace cat {
       switch (*ch) {
         case '\n':
           xPos = 0;
-          yPos -= charHeight;
+          yPos -= kCharHeight;
           break;
         default:
           glutBitmapCharacter(font, *ch);
