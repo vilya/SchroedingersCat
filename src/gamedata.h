@@ -21,7 +21,7 @@ namespace cat {
   //
 
   // Maximum number of bullets that can be live at any one time.
-  static const unsigned int kMaxBullets = 10000;
+  static const unsigned int kMaxBullets = 1024;
 
 
   //

@@ -229,7 +229,7 @@ namespace cat {
     // Emit new bullets
     while (bullets.count < kMaxBullets && game->gameTime >= bullets.lastEmit + bullets.halfLife) {
       bullets.lastEmit += bullets.halfLife;
-      bullets.halfLife = pow(bullets.halfLife, 0.99);
+      bullets.halfLife = pow(bullets.halfLife, 0.999);
 
       // Random emit position anywhere in the play area.
       bullets.position[bullets.count] = Vec2(drand48(), drand48());
@@ -253,7 +253,7 @@ namespace cat {
 
     // Handle player movement.
     if (win.leftPressed || win.rightPressed || win.upPressed || win.downPressed) {
-      const double kScale = 0.03;
+      const double kScale = 0.01;
       const Vec2 kRadius = player.size / 2.0;
 
       Vec2 velocity;
