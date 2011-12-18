@@ -260,6 +260,14 @@ namespace cat {
   }
 
 
+  void DrawPause(GameData* game)
+  {
+    assert(game != NULL);
+    assert(game->draw != NULL);
+    DrawText(0, gGameData->window.height / 2.0f, "PAUSED\nPress [space] to continue, [esc] to quit", eAlignCenter);
+  }
+
+
   //
   // Internal functions
   //

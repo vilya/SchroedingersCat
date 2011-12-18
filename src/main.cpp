@@ -111,6 +111,14 @@ namespace cat {
       DrawPlayArea(gGameData);
       DrawGameOver(gGameData);
       break;
+    case eGamePaused:
+      DrawPlayArea(gGameData);
+      DrawBullets(gGameData);
+      DrawPlayer(gGameData);
+      DrawEffects(gGameData);
+      DrawHUD(gGameData);
+      DrawPause(gGameData);
+      break;
     }
 
     glutSwapBuffers();
@@ -131,18 +139,28 @@ namespace cat {
   void KeyPressed(unsigned char key, int x, int y)
   {
     const unsigned char kEsc = 27;
-    if (key == kEsc) {
-      switch (gGameData->gameState) {
-      case eGamePlaying:
-        gGameData->gameState = eGameOver;
+    const unsigned char kSpace = 32;
+
+    switch (key) {
+      case kEsc:
+        if (gGameData->gameState == eGamePlaying || gGameData->gameState == eGamePaused)
+          SetGameState(gGameData, eGameOver);
+        else
+          exit(0);
         break;
+
+      case kSpace:
+        if (gGameData->gameState == eGamePlaying)
+          SetGameState(gGameData, eGamePaused);
+        else if (gGameData->gameState == eGamePaused)
+          SetGameState(gGameData, eGamePlaying);
+        else
+          gGameData->window.keyPressed[key] = true;
+        break;
+
       default:
-        exit(0);
+        gGameData->window.keyPressed[key] = true;
         break;
-      }
-    }
-    else {
-      gGameData->window.keyPressed[key] = true;
     }
   }
 
@@ -216,8 +234,10 @@ namespace cat {
     if (frameTime < kMinFrameTime)
       SleepFor(kMinFrameTime - frameTime);
 
-    frameEndTime = Now();
-    gGameData->gameTime += (frameEndTime - frameStartTime);
+    if (gGameData->gameState != eGamePaused) {
+      frameEndTime = Now();
+      gGameData->gameTime += (frameEndTime - frameStartTime);
+    }
 
     glutPostRedisplay();
   }
@@ -352,13 +372,22 @@ namespace cat {
         }
       }
     }
-    if (game->gameState == eGameOver) {
-      float elapsed = game->gameTime - game->stateChangeTime;
-      if (elapsed >= 5000) {
-        SetGameState(game, eGameTitleScreen);
-        return;
+    else if (game->gameState == eGamePaused) {
+      for (int i = 0; i < 256; ++i) {
+        if (game->window.keyPressed[i]) {
+          SetGameState(game, eGamePlaying);
+          return;
+        }
       }
     }
+
+    if (game->gameState == eGameOver) {
+      float elapsed = game->gameTime - game->stateChangeTime;
+      if (elapsed >= 5000)
+        SetGameState(game, eGameTitleScreen);
+      return;
+    }
+
     if (game->gameState == eGameTitleScreen)
       return;
 
