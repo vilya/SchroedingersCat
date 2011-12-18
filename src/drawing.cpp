@@ -79,7 +79,7 @@ namespace cat {
     statusMessage(NULL)
   {
     // Load the floor texture.
-    Image* floor = LoadJPEG("resource/floor.jpg");
+    Image* floor = LoadJPEG("resource/floor_alt.jpg");
     assert(floor);
     floorTextureID = UploadTexture(floor);
     delete floor;
@@ -111,6 +111,8 @@ namespace cat {
       glDeleteTextures(1, &playerFrontTextureID);
     if (playerBackTextureID)
       glDeleteTextures(1, &playerBackTextureID);
+    if (particleTextureID)
+      glDeleteTextures(1, &particleTextureID);
   }
 
 
@@ -130,7 +132,7 @@ namespace cat {
     assert(game != NULL);
     assert(game->draw != NULL);
 
-    DrawTiledQuad(0, 0, kFloorZ, 1, 1, game->draw->floorTextureID, 4, 4);
+    DrawTiledQuad(0, 0, kFloorZ, 1, 1, game->draw->floorTextureID, 1, 1);
   }
 
 
@@ -320,6 +322,7 @@ namespace cat {
     glLoadIdentity();
     glTranslatef(x, y, kTextZ);
 
+    glColor3f(1, 0, 0);
     for (char* ch = const_cast<char*>(text); *ch != '\0'; ++ch) {
       glRasterPos2f(xPos, yPos);
       switch (*ch) {
@@ -333,6 +336,7 @@ namespace cat {
           break;
       }
     }
+    glColor3f(1, 1, 1);
 
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
