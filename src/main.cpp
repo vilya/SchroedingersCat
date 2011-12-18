@@ -45,6 +45,7 @@ namespace cat {
   void UpdateGameState(GameData* game);
 
   void StartNewGame(GameData* game);
+  void StartNewLife(GameData* game);
 
   // Get the current system time in milliseconds (may include a fraction of a millisecond).
   double Now();
@@ -360,6 +361,8 @@ namespace cat {
       --player.livesRemaining;
       if (player.livesRemaining <= 0)
         game->gameState = eGameOver;
+      else
+        StartNewLife(game);
     }
   }
 
@@ -377,6 +380,12 @@ namespace cat {
     game->particles.bulletSize = 0.01;
     game->particles.lastEmit = 0;
     game->particles.halfLife = 1000.0;
+  }
+
+
+  void StartNewLife(GameData* game)
+  {
+    game->player.position = Vec2(0.5, 0.5);
   }
 
 
