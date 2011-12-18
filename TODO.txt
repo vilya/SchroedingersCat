@@ -1,8 +1,5 @@
-* Draw a HUD showing time elapsed (as score).
 * Title screen
 * Respawn logic for when you run into a particle (brief - 1 second? - period of invulnerability after respawn).
-* Paint some textures for player, particles, play area.
-* Load in the textures and update the rendering to use them.
 * Work on the game logic (rate at which particles spawn, particle movement & reflection).
 * Add special player abilities.
 * High score list
