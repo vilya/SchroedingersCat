@@ -52,6 +52,7 @@ namespace cat {
   //
 
   GameData::GameData() :
+    gameState(eGameOver),
     gameTime(0),
     player(),
     particles(),

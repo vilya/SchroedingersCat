@@ -35,6 +35,12 @@ namespace cat {
   // Types
   //
 
+  enum GameState {
+    eGamePlaying,
+    eGameOver
+  };
+
+
   struct PlayerData {
     Vec2 position;
     Vec2 size;
@@ -74,6 +80,8 @@ namespace cat {
 
 
   struct GameData {
+    // Current state of the game (playing, game over, etc).
+    GameState gameState;
     // The current elapsed time for the game. We can't just use the system
     // time, because we need to be able to pause it.
     double gameTime;

@@ -1,3 +1,4 @@
+#include <cassert>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -41,6 +42,9 @@ namespace cat {
 
   void UpdateBullets(GameData* game);
   void UpdatePlayer(GameData* game);
+  void UpdateGameState(GameData* game);
+
+  void StartNewGame(GameData* game);
 
   // Get the current system time in milliseconds (may include a fraction of a millisecond).
   double Now();
@@ -88,10 +92,17 @@ namespace cat {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    DrawPlayArea(gGameData);
-    DrawBullets(gGameData);
-    DrawPlayer(gGameData);
-    DrawEffects(gGameData);
+    switch (gGameData->gameState) {
+    case eGamePlaying:
+      DrawPlayArea(gGameData);
+      DrawBullets(gGameData);
+      DrawPlayer(gGameData);
+      DrawEffects(gGameData);
+      break;
+    case eGameOver:
+      DrawPlayArea(gGameData);
+      break;
+    }
 
     glutSwapBuffers();
   }
@@ -110,16 +121,28 @@ namespace cat {
 
   void KeyPressed(unsigned char key, int x, int y)
   {
-    const unsigned char kEsc = 27;
-    if (key == kEsc)
-      exit(0);
+    gGameData->window.keyPressed[key] = true;
 
-    fprintf(stderr, "key %d pressed\n", key);
+    const unsigned char kEsc = 27;
+    if (key == kEsc) {
+      switch (gGameData->gameState) {
+      case eGamePlaying:
+        gGameData->gameState = eGameOver;
+        break;
+      default:
+        exit(0);
+        break;
+      }
+    }
+    else {
+      fprintf(stderr, "key %d pressed\n", key);
+    }
   }
 
 
   void KeyReleased(unsigned char key, int x, int y)
   {
+    gGameData->window.keyPressed[key] = false;
     fprintf(stderr, "key %d released\n", key);
   }
 
@@ -172,17 +195,27 @@ namespace cat {
   {
     double frameStartTime = Now();
 
-    // Calculations for the current frame.
-    UpdateBullets(gGameData);
-    UpdatePlayer(gGameData);
+    switch (gGameData->gameState) {
+    case eGamePlaying:
+      // Calculations for the current frame.
+      UpdateBullets(gGameData);
+      UpdatePlayer(gGameData);
+      UpdateGameState(gGameData);
+      break;
+    default:
+      UpdateGameState(gGameData);
+      break;
+    }
 
     double frameEndTime = Now();
     double frameTime = frameEndTime - frameStartTime;
     if (frameTime < kMinFrameTime)
       SleepFor(kMinFrameTime - frameTime);
 
-    frameEndTime = Now();
-    gGameData->gameTime += (frameEndTime - frameStartTime);
+    if (gGameData->gameState == eGamePlaying) {
+      frameEndTime = Now();
+      gGameData->gameTime += (frameEndTime - frameStartTime);
+    }
 
     glutPostRedisplay();
   }
@@ -190,6 +223,8 @@ namespace cat {
 
   void UpdateBullets(GameData* game)
   {
+    assert(game != NULL);
+
     BulletData& bullets = game->particles;
 
     Vec2 bottomLeft(bullets.bulletSize, bullets.bulletSize);
@@ -248,6 +283,8 @@ namespace cat {
 
   void UpdatePlayer(GameData* game)
   {
+    assert(game != NULL);
+
     WindowData& win = game->window;
     PlayerData& player = game->player;
 
@@ -284,6 +321,62 @@ namespace cat {
     }
 
     // TODO: handle other player inputs.
+  }
+
+
+  void UpdateGameState(GameData* game)
+  {
+    assert(game != NULL);
+
+    if (game->gameState == eGameOver) {
+      for (int i = 0; i < 256; ++i) {
+        if (game->window.keyPressed[i]) {
+          StartNewGame(game);
+          break;
+        }
+      }
+      return;
+    }
+
+    // Check for collisions between the player and the bullets.
+    PlayerData& player = game->player;
+    BulletData& bullets = game->particles;
+
+    const Vec2 kRadius = player.size / 2;
+    const Vec2 kBulletRadius(bullets.bulletSize, bullets.bulletSize);
+
+    Vec2 low = player.position - kRadius;
+    Vec2 high = player.position + kRadius;
+    for (unsigned int i = 0; i < bullets.count; ++i) {
+      Vec2 pos = bullets.position[i];
+      Vec2 bulletLow = pos - kBulletRadius;
+      Vec2 bulletHigh = pos + kBulletRadius;
+
+      if (bulletLow.x > high.x || bulletHigh.x < low.x)
+        continue;
+      if (bulletLow.y > high.y || bulletHigh.y < low.y)
+        continue;
+
+      --player.livesRemaining;
+      if (player.livesRemaining <= 0)
+        game->gameState = eGameOver;
+    }
+  }
+
+
+  void StartNewGame(GameData* game)
+  {
+    game->gameState = eGamePlaying;
+    game->gameTime = 0;
+
+    game->player.position = Vec2(0.5, 0.5);
+    game->player.size = Vec2(0.02, 0.02);
+    game->player.livesRemaining = 9;
+
+    game->particles.count = 0;
+    game->particles.bulletSize = 0.01;
+    game->particles.lastEmit = 0;
+    game->particles.halfLife = 1000.0;
   }
 
 
