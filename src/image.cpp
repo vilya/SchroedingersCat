@@ -200,7 +200,7 @@ namespace cat {
       JSAMPLE* p = new JSAMPLE[kRowSize];
 
       while (cinfo.output_scanline < cinfo.output_height) {
-        int y = cinfo.output_scanline;
+        int y = cinfo.output_height - cinfo.output_scanline - 1;
         jpeg_read_scanlines(&cinfo, &p, 1);
 
         float* dst = img->row(y);
