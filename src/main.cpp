@@ -204,27 +204,38 @@ namespace cat {
 
       pos += vel;
       
-      if (pos.x < bottomLeft.x)
+      if (pos.x < bottomLeft.x) {
         pos.x = bottomLeft.x + (bottomLeft.x - pos.x);
-      else if (pos.x > topRight.x)
+        vel.x = -vel.x;
+      }
+      else if (pos.x > topRight.x) {
         pos.x = topRight.x - (pos.x - topRight.x);
+        vel.x = -vel.x;
+      }
 
-      if (pos.y < bottomLeft.y)
+      if (pos.y < bottomLeft.y) {
         pos.y = bottomLeft.y + (bottomLeft.y - pos.y);
-      else if (pos.y > topRight.y)
+        vel.y = -vel.y;
+      }
+      else if (pos.y > topRight.y) {
         pos.y = topRight.y - (pos.y - topRight.y);
+        vel.y = -vel.y;
+      }
+
+      bullets.position[i] = pos;
+      bullets.velocity[i] = vel;
     }
 
     // Emit new bullets
     while (bullets.count < kMaxBullets && game->gameTime >= bullets.lastEmit + bullets.halfLife) {
       bullets.lastEmit += bullets.halfLife;
-      bullets.halfLife = pow(bullets.halfLife, 0.999);
+      bullets.halfLife = pow(bullets.halfLife, 0.99);
 
       // Random emit position anywhere in the play area.
       bullets.position[bullets.count] = Vec2(drand48(), drand48());
 
       // Random velocity with length between 0.005 and 0.01.
-      bullets.velocity[bullets.count] = Unit(Vec2(drand48(), drand48())) * 0.005 + Vec2(0.005, 0.005);
+      bullets.velocity[bullets.count] = Unit(Vec2(drand48() - 0.5, drand48() - 0.5)) * 0.005;
 
       bullets.launchTime[bullets.count] = bullets.lastEmit;
       bullets.flags[bullets.count] = 0;
