@@ -90,14 +90,10 @@ namespace cat {
       "resource/player_front_entanglement.jpg"
     };
     const char* backTexturePaths[] = {
-      //"resource/player_back_nopowerup.jpg",
-      //"resource/player_back_superposition.jpg",
-      //"resource/player_back_entangling.jpg",
-      //"resource/player_back_entanglement.jpg"
-      "resource/player_back.jpg",
-      "resource/player_back.jpg",
-      "resource/player_back.jpg",
-      "resource/player_back.jpg",
+      "resource/player_back_nopowerup.jpg",
+      "resource/player_back_superposition.jpg",
+      "resource/player_back_entangling.jpg",
+      "resource/player_back_entanglement.jpg"
     };
     for (int p = ePowerUpNone; p < ePowerUpCount; ++p) {
       Image* front = LoadJPEG(frontTexturePaths[p]);
