@@ -4,10 +4,17 @@ OBJ := $(BUILD)/obj
 BIN := bin
 
 CC = g++
-CCFLAGS = -Wall -g -I/opt/local/include
 LD = g++
+
+ifeq ($(OSTYPE),linux-gnu)
+CCFLAGS = -Wall -g
+LDFLAGS = 
+LIBS = -lGL -lglut -ljpeg
+else
+CCFLAGS = -Wall -g -I/opt/local/include
 LDFLAGS = -L/opt/local/lib
 LIBS = -framework OpenGL -framework GLUT -ljpeg
+endif
 
 
 OBJS = \
@@ -35,7 +42,7 @@ $(BIN)/$(EXE): $(OBJS)
 
 
 $(OBJ)/%.o: $(SRC)/%.cpp
-	$(CC) -c -o $@ $(CCFLAGS) $^
+	$(CC) -c -o $@ $(CCFLAGS) $(INCLUDES) $^
 
 
 clean:

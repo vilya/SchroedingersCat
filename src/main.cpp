@@ -6,8 +6,15 @@
 #include <time.h>
 #include <unistd.h>
 
-#include <GLUT/glut.h>
+#ifdef linux
+#include <GL/gl.h>
+#include <GL/glext.h>
+#include <GL/glut.h>
+#else
 #include <OpenGL/gl.h>
+#include <OpenGL/glext.h>
+#include <GLUT/glut.h>
+#endif
 
 #include "drawing.h"
 #include "gamedata.h"

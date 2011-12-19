@@ -1,6 +1,7 @@
 #include "gamedata.h"
 
 #include <cassert>
+#include <cstdlib>
 
 namespace cat {
   
