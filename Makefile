@@ -1,4 +1,5 @@
 SRC := src
+RESOURCE := resource
 BUILD := build
 OBJ := $(BUILD)/obj
 BIN := bin
@@ -25,10 +26,12 @@ OBJS = \
 	$(OBJ)/vec2.o
 
 
-EXE = SchroedingersCat
+NAME = SchroedingersCat
+EXE = $(NAME)
+ZIP = $(NAME).zip
 
 
-all : dirs $(BIN)/$(EXE)
+all : dirs game
 
 
 .PHONY: dirs
@@ -36,6 +39,11 @@ dirs:
 	@mkdir -p $(OBJ)
 	@mkdir -p $(BIN)
 
+
+.PHONY: game
+game: $(BIN)/$(EXE)
+	cp -R $(RESOURCE) $(BIN)
+	cd $(BIN) && zip -r $(ZIP) $(EXE) $(RESOURCE)
 
 $(BIN)/$(EXE): $(OBJS)
 	$(LD) -o $@ $(LDFLAGS) $(LIBS) $^

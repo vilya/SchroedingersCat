@@ -252,7 +252,7 @@ namespace cat {
     y -= kCharHeight;
     DrawText(0, y, "(c) Vilya Harvey, 2011", eAlignCenter);
     y -= kCharHeight * 2;
-    DrawText(0, y, "Made unofficially for Ludum Dare 22", eAlignCenter);
+    DrawText(0, y, "Made for William Harvey and his family", eAlignCenter);
     y -= kCharHeight * 2;
     DrawText(0, y, "Press [space] to start, [esc] to quit", eAlignCenter);
   }

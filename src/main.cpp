@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <libgen.h>
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
@@ -306,7 +307,6 @@ namespace cat {
       bullets.flags[bullets.count] = 0;
 
       ++bullets.count;
-      fprintf(stderr, "%u bullets\n", bullets.count);
     }
   }
 
@@ -507,6 +507,8 @@ int main(int argc, char** argv)
 {
   printf("%s\n", cat::kGameName);
   printf("%s\n", cat::kCopyrightMessage);
+
+  chdir(dirname(argv[0]));
 
   cat::InitGameData();
   cat::Start();
