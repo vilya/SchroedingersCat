@@ -55,6 +55,7 @@ namespace cat {
   void StartNewLife(GameData* game);
 
   void SetGameState(GameData* game, GameState state);
+  void SetPowerUp(GameData* game, PowerUp powerUp);
 
   // Get the current system time in milliseconds (may include a fraction of a millisecond).
   double Now();
@@ -364,6 +365,18 @@ namespace cat {
       default:
         break;
     }
+
+    // Check whether the player is launching a power-up.
+    if (player.powerUp == ePowerUpNone) {
+      if (win.keyPressed['s'] && player.superpositionsRemaining > 0) {
+        SetPowerUp(game, ePowerUpSuperposition);
+        --player.superpositionsRemaining;
+      }
+      else if (win.keyPressed['d'] && player.entanglementsRemaining > 0) {
+        SetPowerUp(game, ePowerUpEntangling);
+        --player.entanglementsRemaining;
+      }
+    }
   }
 
 
@@ -452,8 +465,7 @@ namespace cat {
   void StartNewLife(GameData* game)
   {
     game->player.position = Vec2(0.5, 0.5);
-    game->player.powerUp = ePowerUpSuperposition; // Temporary invulnerability when starting a new life.
-    game->player.powerUpExpireTime = game->gameTime + 2000.0;
+    SetPowerUp(game, ePowerUpSuperposition);
   }
 
 
@@ -461,6 +473,16 @@ namespace cat {
   {
     game->gameState = state;
     game->stateChangeTime = game->gameTime;
+  }
+
+
+  void SetPowerUp(GameData* game, PowerUp powerUp)
+  {
+    const double kPowerUpDuration[] = { 0.0, 2000.0, 1000.0, 60000.0 };
+    double duration = kPowerUpDuration[powerUp];
+
+    game->player.powerUp = powerUp;
+    game->player.powerUpExpireTime = game->gameTime + duration;
   }
 
 
