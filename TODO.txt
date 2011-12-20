@@ -1,4 +1,24 @@
-* Add special player abilities.
+* Add special player abilities (superposition is working, entanglement isn't yet).
 * Add special collectible particles as a way to replenish power ups.
 * Add the gas canisters.
 * High score table.
+
+-- Extra post-competition stuff: --
+
+* Death animations.
+* Restart countdown.
+* Loader for an image format that supports transparency.
+* Better textures.
+* Graphical effects (light bloom from particles, motion blur).
+* Nice hand-drawn bitmapped font.
+* 3D viewpoint?
+* Sound effects.
+* Music.
+* Design waves of particles instead of just emitting randomly.
+* Have a fixed number of waves before victory.
+* Congratulations screen for when you complete it.
+* Credits.
+* Fullscreen mode.
+* Joystick/other input device support.
+* Port to other platforms (iOS?).
+
