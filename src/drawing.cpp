@@ -235,6 +235,14 @@ namespace cat {
     assert(game != NULL);
     assert(game->draw != NULL);
 
+    //glColor3f(1, 0, 0);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    DrawTiledQuad(0.1, 0.5, kTextZ, 0.8, 0.3, game->draw->titleTextureID, 1, 1);
+    glDisable(GL_BLEND);
+
+    /*
     int lines = 6;
     float y = (gGameData->window.height + lines * kCharHeight) / 2.0f;
 
@@ -245,6 +253,7 @@ namespace cat {
     DrawText(0, y, "Made for William Harvey and his family", eAlignCenter);
     y -= kCharHeight * 2;
     DrawText(0, y, "Press [space] to start, [esc] to quit", eAlignCenter);
+    */
   }
 
 
