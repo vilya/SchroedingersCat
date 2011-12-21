@@ -5,11 +5,12 @@ if [ $# -lt 4 ]; then
   exit 1
 fi
 
+
 app_path=$1
-app_name=`basename $app_path`
 executable=$2
 plist=$3
 resources=$4
+
 
 if [ ! -x $executable ]; then
   if [ -e $executable ]; then
@@ -30,14 +31,14 @@ if [ ! -x $resources ]; then
   exit 1
 fi
 
-echo mkdir -p $app_name
-echo pushd $app_name
-echo mkdir -p Contents/MacOS
-echo mkdir -p Contents/Frameworks
-echo mkdir -p Contents/Resources
-echo cp $executable Contents/MacOS
-echo cp -R $resources/\* Contents/Resources
-echo cp $plist Contents/Info.plist
-echo popd
-echo chmod +x $app_name
+mkdir -p $app_path
+mkdir -p $app_path/Contents/MacOS
+mkdir -p $app_path/Contents/Frameworks
+mkdir -p $app_path/Contents/Resources
+cp $executable $app_path/Contents/MacOS
+cp -R $resources/* $app_path/Contents/Resources
+cp $plist $app_path/Contents/Info.plist
+chmod +x $app_path
+# TODO: find all the necessary dylibs, copy them into the Frameworks folder and
+# adjust the link paths in the executable to match.
 
