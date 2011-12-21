@@ -1,10 +1,9 @@
+* Build a .app bundle for OS X redistribution.
+* Make a SchroedingersCat.icns file (app icon for OS X).
 * Add special player abilities (superposition is working, entanglement isn't yet).
 * Add special collectible particles as a way to replenish power ups.
 * Add the gas canisters.
 * High score table.
-
--- Extra post-competition stuff: --
-
 * Death animations.
 * Restart countdown.
 * Better textures.
