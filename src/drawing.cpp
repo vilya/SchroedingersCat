@@ -1,7 +1,8 @@
 #include "drawing.h"
 
-#include "image.h"
 #include "gamedata.h"
+#include "image.h"
+#include "resource.h"
 
 #include <cassert>
 #include <cstdlib>
@@ -83,20 +84,20 @@ namespace cat {
     statusMessage(NULL)
   {
     // Load the floor texture.
-    floorTextureID = UploadTexture("resource/floor_alt.jpg");
+    floorTextureID = UploadTexture(ResourcePath("floor_alt.jpg"));
 
     // Load the player textures.
     const char* frontTexturePaths[] = {
-      "resource/player_front_nopowerup.jpg",
-      "resource/player_front_superposition.jpg",
-      "resource/player_front_entangling.jpg",
-      "resource/player_front_entanglement.jpg"
+      "player_front_nopowerup.jpg",
+      "player_front_superposition.jpg",
+      "player_front_entangling.jpg",
+      "player_front_entanglement.jpg"
     };
     const char* backTexturePaths[] = {
-      "resource/player_back_nopowerup.jpg",
-      "resource/player_back_superposition.jpg",
-      "resource/player_back_entangling.jpg",
-      "resource/player_back_entanglement.jpg"
+      "player_back_nopowerup.jpg",
+      "player_back_superposition.jpg",
+      "player_back_entangling.jpg",
+      "player_back_entanglement.jpg"
     };
     for (int p = ePowerUpNone; p < ePowerUpCount; ++p) {
       playerFrontTextureID[p] = UploadTexture(frontTexturePaths[p]);
@@ -104,10 +105,10 @@ namespace cat {
     }
 
     // Load the particle textures.
-    particleTextureID = UploadTexture("resource/particle.jpg");
+    particleTextureID = UploadTexture("particle.jpg");
 
     // Load the title screen texture.
-    titleTextureID = UploadTexture("resource/TitleScreen.tif");
+    titleTextureID = UploadTexture("TitleScreen.tif");
   }
 
 
