@@ -7,7 +7,6 @@
 
 * Death animations.
 * Restart countdown.
-* Loader for an image format that supports transparency.
 * Better textures.
 * Graphical effects (light bloom from particles, motion blur).
 * Nice hand-drawn bitmapped font.

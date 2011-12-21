@@ -51,6 +51,7 @@ namespace cat {
     GLuint playerFrontTextureID[ePowerUpCount];
     GLuint playerBackTextureID[ePowerUpCount];
     GLuint particleTextureID;
+    GLuint titleTextureID;
 
     char* statusMessage;
 
@@ -63,8 +64,7 @@ namespace cat {
   // Forward declarations
   //
 
-  GLuint UploadTexture(Image* img);
-  GLuint UploadVerts(int numVerts, float* verts);
+  GLuint UploadTexture(const char* filename);
 
   void DrawTiledQuad(double x, double y, double z, double w, double h,
                      GLuint textureID, double horizTiles, double vertTiles);
@@ -83,10 +83,7 @@ namespace cat {
     statusMessage(NULL)
   {
     // Load the floor texture.
-    Image* floor = LoadJPEG("resource/floor_alt.jpg");
-    assert(floor);
-    floorTextureID = UploadTexture(floor);
-    delete floor;
+    floorTextureID = UploadTexture("resource/floor_alt.jpg");
 
     // Load the player textures.
     const char* frontTexturePaths[] = {
@@ -102,22 +99,15 @@ namespace cat {
       "resource/player_back_entanglement.jpg"
     };
     for (int p = ePowerUpNone; p < ePowerUpCount; ++p) {
-      Image* front = LoadJPEG(frontTexturePaths[p]);
-      assert(front);
-      playerFrontTextureID[p] = UploadTexture(front);
-      delete front;
-
-      Image* back = LoadJPEG(backTexturePaths[p]);
-      assert(back);
-      playerBackTextureID[p] = UploadTexture(back);
-      delete back;
+      playerFrontTextureID[p] = UploadTexture(frontTexturePaths[p]);
+      playerBackTextureID[p] = UploadTexture(backTexturePaths[p]);
     }
 
     // Load the particle textures.
-    Image* particle = LoadJPEG("resource/particle.jpg");
-    assert(particle);
-    particleTextureID = UploadTexture(particle);
-    delete particle;
+    particleTextureID = UploadTexture("resource/particle.jpg");
+
+    // Load the title screen texture.
+    titleTextureID = UploadTexture("resource/TitleScreen.tif");
   }
 
 
@@ -278,37 +268,16 @@ namespace cat {
   // Internal functions
   //
 
-  GLuint UploadTexture(Image* img)
+  GLuint UploadTexture(const char* filename)
   {
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
+    Image* img = new Image(filename);
+    assert(img);
 
-    int localFormat;
-    switch (img->channels()) {
-    case 1:
-      localFormat = GL_LUMINANCE;
-      break;
-    case 2:
-    case 3:
-      localFormat = GL_RGB;
-      break;
-    default:
-      localFormat = GL_RGBA;
-      break;
-    }
+    img->uploadTexture();
+    GLuint texID = img->getTexID();
 
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    
-    glPixelStorei(GL_UNPACK_ALIGNMENT, sizeof(float));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    glTexImage2D(GL_TEXTURE_2D, 0, img->channels(), img->width(), img->height(), 0, localFormat, GL_FLOAT, img->data());
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    return textureID;
+    delete img;
+    return texID;
   }
 
 

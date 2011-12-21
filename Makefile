@@ -10,11 +10,11 @@ LD = g++
 ifeq ($(OSTYPE),linux-gnu)
 CCFLAGS = -Wall -g
 LDFLAGS = 
-LIBS = -lGL -lglut -ljpeg
+LIBS = -lGL -lglut -ljpeg -lpng -ltiff
 else
 CCFLAGS = -Wall -g -I/opt/local/include
 LDFLAGS = -L/opt/local/lib
-LIBS = -framework OpenGL -framework GLUT -ljpeg
+LIBS = -framework OpenGL -framework GLUT -ljpeg -lpng -ltiff
 endif
 
 

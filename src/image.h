@@ -1,58 +1,82 @@
 #ifndef cat_image_h
 #define cat_image_h
 
-#include <cstdlib>
+#include <cstdio>
+#include <stdexcept>
 
 namespace cat {
 
-  //
-  // Types
-  //
 
-  class Image {
-  public:
-    Image(int width, int height, int channels);
-    Image(const Image& img);
-    ~Image();
+class ImageException : public std::exception {
+public:
+	char message[4096];
 
-    const Image& operator = (const Image& img);
+	ImageException(const char* msg_format...);
+	~ImageException() throw() {}
 
-    int width() const;
-    int height() const;
-    int channels() const;
-
-    int elements() const; // The number of pixels * the number of channels.
-    int rowSize() const;  // The width * the number of channels.
-    int pixels() const;   // The width * height.
-
-    float get(int x, int y, int c) const;
-    void set(int x, int y, int c, float val);
-
-    const float* data() const;
-    float* data();
-
-    const float* row(int index) const;
-    float* row(int index);
-
-  private:
-    void init();
-    void destroy();
-
-  private:
-    int _width;       // Width of the image, in pixels.
-    int _height;      // Height of the image, in pixels.
-    int _channels;    // Number of floats per pixel.
-    float** _data;
-  };
+  virtual const char* what() const throw();
+};
 
 
-  //
-  // Functions
-  //
+class Image {
+public:
+  Image(const char* path) throw(ImageException);
+  Image(int type, int bytesPerPixel, int width, int height);
+  Image(const Image& img);
+  ~Image();
 
-  Image* LoadJPEG(const char* filename);
+  int getType() const;
+  unsigned int getBytesPerPixel() const;
+  unsigned int getWidth() const;
+  unsigned int getHeight() const;
+  unsigned char* getPixels();
+
+  unsigned int getTexID() const;
+  void uploadTexture(unsigned int texID = 0);
+  void uploadTextureAs(int targetType, unsigned int texID = 0);
+
+  void downsampleInPlace(unsigned int downsampleX, unsigned int downsampleY);
+
+  //! Like getPixels, but this transfers ownership of the pixel memory to the
+  //! caller.
+  unsigned char* takePixels();
+
+  //! Call this if you want to free up the memory used to store the pixels,
+  //! (e.g. once you've uploaded them to GPU memory) without deleting the
+  //! entire object.
+  void deletePixels();
+
+private:
+  void loadBMP(FILE* file) throw(ImageException);
+  void loadTGA(FILE* file) throw(ImageException);
+  void loadPPM(FILE* file) throw(ImageException);
+  void loadJPG(FILE* file) throw(ImageException);
+  void loadPNG(FILE* file) throw(ImageException);
+  void loadTIFF(const char* filename) throw(ImageException);
+
+  void tgaLoadUncompressed(FILE* file, unsigned int numPixels,
+      unsigned int bytesPerPixel, unsigned char *pixels)
+    throw(ImageException);
+
+  void tgaLoadRLECompressed(FILE* file, unsigned int numPixels,
+      unsigned int bytesPerPixel, unsigned char *pixels)
+    throw(ImageException);
+
+  int ppmGetNextInt(FILE* file) throw(ImageException);
+
+private:
+  int _type;
+  unsigned int _texId;
+  unsigned int _bytesPerPixel;
+  unsigned int _width;
+  unsigned int _height;
+  unsigned char* _pixels;
+};
+
+
+Image* downsample(Image* src, unsigned int downsampleX, unsigned int downsampleY);
 
 } // namespace cat
 
-#endif // cat_image_h
+#endif // vgl_image_h
 
