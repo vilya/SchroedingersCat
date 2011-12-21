@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key>
+  <string>SchroedingersCat</string>
+
+  <key>CFBundleDisplayName</key>
+  <string>Schroedinger's Cat: The Game</string>
+
+  <key>CFBundleIdentifier</key>
+  <string>com.harveyboys.SchroedingersCat</string>
+
+  <key>CFBundleVersion</key>
+  <string>0.1</string>
+
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+
+  <key>CFBundleSignature</key>
+  <string>???</string>
+
+  <key>CFBundleExecutable</key>
+  <string>MacOS/SchroedingersCat</string>
+
+  <key>LSMinimumSystemVersion</key>
+  <string>10.5.0</string>
+
+  <key>NSHumanReadableCopyright</key>
+  <string>(c) 2011 Vilya Harvey</string>
+</dict>
+</plist>
