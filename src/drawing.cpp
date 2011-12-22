@@ -28,8 +28,8 @@ namespace cat {
   static const GLuint kTexCoordAttrib = 1;
 
   static const float kFloorZ = -1;
-  static const float kPlayerZ = 0;
-  static const float kBulletZ = -0.5;
+  static const float kPlayerZ = -0.5;
+  static const float kBulletZ = -0.2;
   static const float kTextZ = -0.1;
 
   static const float kCharHeight = 21;
@@ -54,7 +54,8 @@ namespace cat {
     GLuint particleTextureID;
     GLuint titleTextureID;
 
-    char* statusMessage;
+    GLuint collisionQueryID;
+    GLuint maxPixelsDrawn;
 
     DrawingData();
     ~DrawingData();
@@ -66,12 +67,12 @@ namespace cat {
   //
 
   GLuint UploadTexture(const char* filename);
-
   void DrawTiledQuad(double x, double y, double z, double w, double h,
                      GLuint textureID, double horizTiles, double vertTiles);
   void DrawText(double x, double y, const char* text, StringAlignment alignment);
 
   float StringWidth(void* font, const char* text);
+  bool CheckGLError(const char *errMsg);
 
 
   //
@@ -81,7 +82,9 @@ namespace cat {
   DrawingData::DrawingData() :
     floorTextureID(0),
     particleTextureID(0),
-    statusMessage(NULL)
+    titleTextureID(0),
+    collisionQueryID(0),
+    maxPixelsDrawn(0)
   {
     // Load the floor texture.
     floorTextureID = UploadTexture(ResourcePath("floor_alt.jpg"));
@@ -109,6 +112,9 @@ namespace cat {
 
     // Load the title screen texture.
     titleTextureID = UploadTexture(ResourcePath("TitleScreen.tif"));
+
+    // Create a query object which we'll use for collision detection.
+    glGenQueries(1, &collisionQueryID);
   }
 
 
@@ -124,6 +130,8 @@ namespace cat {
     }
     if (particleTextureID)
       glDeleteTextures(1, &particleTextureID);
+    if (collisionQueryID)
+      glDeleteQueries(1, &collisionQueryID);
   }
 
 
@@ -133,6 +141,7 @@ namespace cat {
 
   void InitDrawing(GameData* game)
   {
+    glEnable(GL_DEPTH_TEST);
     assert(game->draw == NULL);
     game->draw = new DrawingData();
   }
@@ -166,7 +175,22 @@ namespace cat {
         textureID = draw->playerBackTextureID[player.powerUp];
         break;
     }
+
+    // Keep track of how many pixels are drawn for the player. If this is less
+    // than normal it means the player's hit something.
+    glBeginQuery(GL_SAMPLES_PASSED, draw->collisionQueryID);
     DrawTiledQuad(bottomLeft.x, bottomLeft.y, kPlayerZ, player.size.x, player.size.y, textureID, 1, 1);
+    glEndQuery(GL_SAMPLES_PASSED);
+
+    GLuint pixelsDrawn = 0;
+    glGetQueryObjectuiv(draw->collisionQueryID, GL_QUERY_RESULT, &pixelsDrawn);
+
+    // On first frame, the player will be unobscured so the value should only
+    // ever go down when a particle obscures part of the player.
+    if (pixelsDrawn > draw->maxPixelsDrawn)
+      draw->maxPixelsDrawn = pixelsDrawn; 
+    else if (pixelsDrawn < draw->maxPixelsDrawn)
+      player.collision = true;
   }
 
 
@@ -273,14 +297,20 @@ namespace cat {
   }
 
 
+  void WindowResized(GameData* game)
+  {
+    assert(game != NULL);
+    assert(game->draw != NULL);
+    game->draw->maxPixelsDrawn = 0;
+  }
+
+
   //
   // Internal functions
   //
 
   GLuint UploadTexture(const char* filename)
   {
-    fprintf(stderr, "Uploading texture from %s\n", filename);
-
     Image* img = new Image(filename);
     assert(img);
 
@@ -388,6 +418,16 @@ namespace cat {
       maxWidth = width;
     return maxWidth;
   }
+
+
+  bool CheckGLError(const char *errMsg)
+  {
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR)
+      fprintf(stderr, "%s: %s (%d)\n", errMsg, gluErrorString(err), err);
+    return (err != GL_NO_ERROR);
+  }
+
 
 } // namespace cat
 

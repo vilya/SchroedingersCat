@@ -68,6 +68,7 @@ namespace cat {
     PlayerView view;
     int superpositionsRemaining;
     int entanglementsRemaining;
+    bool collision;
 
     PlayerData();
   };

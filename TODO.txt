@@ -1,4 +1,3 @@
-* Pixel accurate collision detection
 * Death animations.
 * Restart countdown.
 * Design waves of particles instead of just emitting randomly.

@@ -29,6 +29,9 @@ namespace cat {
   void DrawGameOver(GameData* game);
   void DrawPause(GameData* game);
 
+  // Callback to notify the drawing system when the window gets resized.
+  void WindowResized(GameData* game);
+
 } // namespace cat
 
 #endif // cat_drawing_h

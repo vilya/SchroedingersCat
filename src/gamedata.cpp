@@ -24,7 +24,8 @@ namespace cat {
     powerUpExpireTime(0),
     view(ePlayerFront),
     superpositionsRemaining(0),
-    entanglementsRemaining(0)
+    entanglementsRemaining(0),
+    collision(false)
   {
   }
 

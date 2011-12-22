@@ -136,11 +136,12 @@ namespace cat {
 
   void Resize(int width, int height)
   {
+    glViewport(0, 0, width, height);
     if (gGameData) {
       gGameData->window.width = width;
       gGameData->window.height = height;
+      WindowResized(gGameData);
     }
-    glViewport(0, 0, width, height);
     glutPostRedisplay();
   }
 
@@ -434,26 +435,16 @@ namespace cat {
     // Check for collisions between the player and the bullets.
     PlayerData& player = game->player;
     BulletData& bullets = game->particles;
-    if (player.powerUp == ePowerUpSuperposition)
-      return; // Not affected by collisions when superposed.
+
+    if (player.powerUp == ePowerUpSuperposition) {
+      // Not affected by collisions when superposed.
+      player.collision = false;
+      return;
+    }
 
     // TODO: add handling for the entanglement power up.
 
-    const Vec2 kRadius = player.size / 2;
-    const Vec2 kBulletRadius(bullets.bulletSize, bullets.bulletSize);
-
-    Vec2 low = player.position - kRadius;
-    Vec2 high = player.position + kRadius;
-    for (unsigned int i = 0; i < bullets.count; ++i) {
-      Vec2 pos = bullets.position[i];
-      Vec2 bulletLow = pos - kBulletRadius;
-      Vec2 bulletHigh = pos + kBulletRadius;
-
-      if (bulletLow.x > high.x || bulletHigh.x < low.x)
-        continue;
-      if (bulletLow.y > high.y || bulletHigh.y < low.y)
-        continue;
-
+    if (player.collision) {
       --player.livesRemaining;
       if (player.livesRemaining <= 0)
         SetGameState(game, eGameOver);
@@ -485,6 +476,7 @@ namespace cat {
   void StartNewLife(GameData* game)
   {
     game->player.position = Vec2(0.5, 0.5);
+    game->player.collision = false;
     SetPowerUp(game, ePowerUpSuperposition);
   }
 
