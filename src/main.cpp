@@ -476,7 +476,7 @@ namespace cat {
     StartNewLife(game);
 
     game->particles.count = 0;
-    game->particles.bulletSize = 0.06;
+    game->particles.bulletSize = 0.04;
     game->particles.lastEmit = 0;
     game->particles.halfLife = 1000.0;
   }
