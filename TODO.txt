@@ -1,19 +1,17 @@
-* Add special player abilities (superposition is working, entanglement isn't yet).
-* Add special collectible particles as a way to replenish power ups.
-* Add the gas canisters.
-* High score table.
-
--- Extra post-competition stuff: --
-
+* Pixel accurate collision detection
 * Death animations.
 * Restart countdown.
+* Design waves of particles instead of just emitting randomly.
+* Add special player abilities (superposition is working, entanglement isn't yet).
+* High score table.
+* Add special collectible particles as a way to replenish power ups.
+* Add the gas canisters.
 * Better textures.
 * Graphical effects (light bloom from particles, motion blur).
-* Nice hand-drawn bitmapped font.
+* Nice hand-drawn? bitmapped font (there are lots of great free ones at www.dafont.com).
 * 3D viewpoint?
 * Sound effects.
 * Music.
-* Design waves of particles instead of just emitting randomly.
 * Have a fixed number of waves before victory.
 * Congratulations screen for when you complete it.
 * Credits.
