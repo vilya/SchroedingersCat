@@ -2,8 +2,14 @@
 <!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
 <plist version="0.9">
 <dict>
+  <key>CFBundleName</key>
+  <string>SchroedingersCat</string>
+
+  <key>CFBundleDisplayName</key>
+  <string>Schroedinger's Cat: The Game</string>
+
   <key>CFBundleIconFile</key>
-  <string>Preview.icns</string>
+  <string>SchroedingersCat.icns</string>
 
   <key>CFBundlePackageType</key>
   <string>APPL</string>
