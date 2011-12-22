@@ -449,14 +449,14 @@ namespace cat {
     game->gameState = eGamePlaying;
     game->gameTime = 0;
 
-    game->player.size = Vec2(0.04, 0.04);
+    game->player.size = Vec2(0.06, 0.06);
     game->player.livesRemaining = 9;
     game->player.superpositionsRemaining = 3;
     game->player.entanglementsRemaining = 1;
     StartNewLife(game);
 
     game->particles.count = 0;
-    game->particles.bulletSize = 0.015;
+    game->particles.bulletSize = 0.06;
     game->particles.lastEmit = 0;
     game->particles.halfLife = 1000.0;
   }
