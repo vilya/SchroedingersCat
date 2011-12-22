@@ -238,6 +238,8 @@ namespace cat {
       break;
     }
 
+    glutPostRedisplay();
+
     double frameEndTime = Now();
     double frameTime = frameEndTime - frameStartTime;
     if (frameTime < kMinFrameTime)
@@ -247,8 +249,6 @@ namespace cat {
       frameEndTime = Now();
       gGameData->gameTime += (frameEndTime - frameStartTime);
     }
-
-    glutPostRedisplay();
   }
 
 
@@ -298,10 +298,30 @@ namespace cat {
       bullets.halfLife = pow(bullets.halfLife, 0.999);
 
       // Random emit position anywhere in the play area.
-      bullets.position[bullets.count] = Vec2(drand48(), drand48());
+      int wall = int(drand48() * 4) % 4;
+      float angle = (drand48() * 0.9 + 0.05) * M_PI; // in radians, 0 is parallel to +ve x axis, pi/2 is +ve y axis
+      float speed = drand48() * 0.003 + 0.001; // Random speed between 0.001 and 0.004
+      switch (wall) {
+      case 0: // left wall
+        bullets.position[bullets.count] = Vec2(0, drand48());
+        angle += M_PI_2;
+        break;
+      case 1: // top wall
+        bullets.position[bullets.count] = Vec2(drand48(), 1);
+        angle += M_PI;
+        break;
+      case 2: // right wall
+        bullets.position[bullets.count] = Vec2(1, drand48());
+        angle -= M_PI_2;
+        break;
+      case 3: // bottom wall
+        bullets.position[bullets.count] = Vec2(drand48(), 0);
+        break;
+      }
 
       // Random velocity with length between 0.005 and 0.01.
-      bullets.velocity[bullets.count] = Unit(Vec2(drand48() - 0.5, drand48() - 0.5)) * 0.005;
+      bullets.velocity[bullets.count] = Vec2(cos(angle), sin(angle)) * speed;
+      //bullets.velocity[bullets.count] = Vec2(0, 0);
 
       bullets.launchTime[bullets.count] = bullets.lastEmit;
       bullets.flags[bullets.count] = 0;
@@ -449,14 +469,14 @@ namespace cat {
     game->gameState = eGamePlaying;
     game->gameTime = 0;
 
-    game->player.size = Vec2(0.04, 0.04);
+    game->player.size = Vec2(0.06, 0.06);
     game->player.livesRemaining = 9;
     game->player.superpositionsRemaining = 3;
     game->player.entanglementsRemaining = 1;
     StartNewLife(game);
 
     game->particles.count = 0;
-    game->particles.bulletSize = 0.015;
+    game->particles.bulletSize = 0.04;
     game->particles.lastEmit = 0;
     game->particles.halfLife = 1000.0;
   }

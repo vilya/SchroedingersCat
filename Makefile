@@ -15,7 +15,7 @@ LIBS = -lGL -lglut -ljpeg -lpng -ltiff
 GAME = game-linux
 else
 CCFLAGS = -Wall -g -I/opt/local/include
-LDFLAGS = -L/opt/local/lib
+LDFLAGS = -headerpad_max_install_names -L/opt/local/lib
 LIBS = -framework OpenGL -framework GLUT -ljpeg -lpng -ltiff
 GAME = game-osx
 endif
@@ -26,6 +26,7 @@ OBJS = \
 	$(OBJ)/gamedata.o \
 	$(OBJ)/image.o \
 	$(OBJ)/main.o \
+	$(OBJ)/resource.o \
 	$(OBJ)/vec2.o
 
 
@@ -52,7 +53,7 @@ game-linux: $(BIN)/$(EXE)
 
 .PHONY: game-osx
 game-osx: $(BIN)/$(EXE)
-	$(TOOLS)/appbuilder.sh bin/$(APP) bin/$(EXE) $(TOOLS)/Info.plist $(RESOURCE)
+	$(TOOLS)/makeappbundle.sh $(BIN)/$(APP) $(BIN)/$(EXE) $(RESOURCE)
 
 
 $(BIN)/$(EXE): $(OBJS)

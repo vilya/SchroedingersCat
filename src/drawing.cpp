@@ -1,7 +1,8 @@
 #include "drawing.h"
 
-#include "image.h"
 #include "gamedata.h"
+#include "image.h"
+#include "resource.h"
 
 #include <cassert>
 #include <cstdlib>
@@ -83,31 +84,31 @@ namespace cat {
     statusMessage(NULL)
   {
     // Load the floor texture.
-    floorTextureID = UploadTexture("resource/floor_alt.jpg");
+    floorTextureID = UploadTexture(ResourcePath("floor_alt.jpg"));
 
     // Load the player textures.
     const char* frontTexturePaths[] = {
-      "resource/player_front_nopowerup.jpg",
-      "resource/player_front_superposition.jpg",
-      "resource/player_front_entangling.jpg",
-      "resource/player_front_entanglement.jpg"
+      "player_front_nopowerup.tif",
+      "player_front_superposition.tif",
+      "player_front_entangling.tif",
+      "player_front_entanglement.tif"
     };
     const char* backTexturePaths[] = {
-      "resource/player_back_nopowerup.jpg",
-      "resource/player_back_superposition.jpg",
-      "resource/player_back_entangling.jpg",
-      "resource/player_back_entanglement.jpg"
+      "player_back_nopowerup.tif",
+      "player_back_superposition.tif",
+      "player_back_entangling.tif",
+      "player_back_entanglement.tif"
     };
     for (int p = ePowerUpNone; p < ePowerUpCount; ++p) {
-      playerFrontTextureID[p] = UploadTexture(frontTexturePaths[p]);
-      playerBackTextureID[p] = UploadTexture(backTexturePaths[p]);
+      playerFrontTextureID[p] = UploadTexture(ResourcePath(frontTexturePaths[p]));
+      playerBackTextureID[p] = UploadTexture(ResourcePath(backTexturePaths[p]));
     }
 
     // Load the particle textures.
-    particleTextureID = UploadTexture("resource/particle.jpg");
+    particleTextureID = UploadTexture(ResourcePath("atom.tif"));
 
     // Load the title screen texture.
-    titleTextureID = UploadTexture("resource/TitleScreen.tif");
+    titleTextureID = UploadTexture(ResourcePath("TitleScreen.tif"));
   }
 
 
@@ -184,6 +185,9 @@ namespace cat {
 
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_POINT_SPRITE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glBindTexture(GL_TEXTURE_2D, game->draw->particleTextureID);
     glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
 
@@ -195,6 +199,8 @@ namespace cat {
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_POINT_SPRITE);
+    glDisable(GL_BLEND);
   }
 
 
@@ -273,6 +279,8 @@ namespace cat {
 
   GLuint UploadTexture(const char* filename)
   {
+    fprintf(stderr, "Uploading texture from %s\n", filename);
+
     Image* img = new Image(filename);
     assert(img);
 

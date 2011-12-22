@@ -35,7 +35,7 @@ namespace cat {
 
   BulletData::BulletData() :
     count(0),
-    bulletSize(0.01),
+    bulletSize(0.03),
     lastEmit(0),
     halfLife(1000.0)
   {
