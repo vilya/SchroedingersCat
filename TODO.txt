@@ -18,3 +18,14 @@
 * Joystick/other input device support.
 * Port to iOS/Android/Windows...?
 
+
+-- Code cleanup --
+
+* Turn functions into methods:
+  - Move UpdateXXX into the relevant classes.
+  - StartNewGame -> GameData::startGame()
+  - StartNewLife -> GameData::startNewLife()
+  - SetPowerUp -> Player::powerUp(PowerUp powerUp).
+* Split up gamedata.h/.cpp into one .h/.cpp pair for each of the classes in
+  there.
+* Rename GameData to Game.
