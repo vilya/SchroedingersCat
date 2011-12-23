@@ -2,6 +2,7 @@
 
 #include "gamedata.h"
 #include "image.h"
+#include "level.h"
 #include "resource.h"
 
 #include <cassert>
@@ -24,12 +25,12 @@ namespace cat {
   // Constants
   //
 
-  static const GLuint kVertexAttrib = 0;
-  static const GLuint kTexCoordAttrib = 1;
+  //static const GLuint kVertexAttrib = 0;
+  //static const GLuint kTexCoordAttrib = 1;
 
   static const float kFloorZ = -1;
   static const float kPlayerZ = -0.5;
-  static const float kBulletZ = -0.2;
+  static const float kAtomZ = -0.2;
   static const float kTextZ = -0.1;
 
   static const float kCharHeight = 21;
@@ -194,18 +195,21 @@ namespace cat {
   }
 
 
-  void DrawBullets(GameData* game)
+  void DrawAtoms(GameData* game)
   {
     assert(game != NULL);
     assert(game->draw != NULL);
 
-    BulletData& bullets = game->particles;
+    if (game->currentLevel == game->levels.end())
+      return;
+
+    Level& level = *game->currentLevel;
     WindowData& win = game->window;
 
-    GLfloat bulletSize = win.width * bullets.bulletSize;
-    if (bulletSize < 1)
-      bulletSize = 1;
-    glPointSize(bulletSize);
+    GLfloat atomSize = std::min(win.width, win.height) * kAtomSize;
+    if (atomSize < 1)
+      atomSize = 1;
+    glPointSize(atomSize);
 
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_POINT_SPRITE);
@@ -216,9 +220,8 @@ namespace cat {
     glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
 
     glBegin(GL_POINTS);
-    for (unsigned int i = 0; i < bullets.count; ++i) {
-      glVertex3d(bullets.position[i].x, bullets.position[i].y, kBulletZ);
-    }
+    for (unsigned int i = 0; i < level.atomCount; ++i)
+      glVertex3d(level.position[i].x, level.position[i].y, kAtomZ);
     glEnd();
 
     glBindTexture(GL_TEXTURE_2D, 0);

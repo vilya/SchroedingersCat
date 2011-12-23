@@ -48,7 +48,7 @@ namespace cat {
   void SpecialKeyReleased(int key, int x, int y);
   void MainLoop();
 
-  void UpdateBullets(GameData* game);
+  void UpdateAtoms(GameData* game);
   void UpdatePlayer(GameData* game);
   void UpdateGameState(GameData* game);
 
@@ -111,7 +111,7 @@ namespace cat {
       break;
     case eGamePlaying:
       DrawPlayArea(gGameData);
-      DrawBullets(gGameData);
+      DrawAtoms(gGameData);
       DrawPlayer(gGameData);
       DrawEffects(gGameData);
       DrawHUD(gGameData);
@@ -122,7 +122,7 @@ namespace cat {
       break;
     case eGamePaused:
       DrawPlayArea(gGameData);
-      DrawBullets(gGameData);
+      DrawAtoms(gGameData);
       DrawPlayer(gGameData);
       DrawEffects(gGameData);
       DrawHUD(gGameData);
@@ -230,7 +230,7 @@ namespace cat {
     switch (gGameData->gameState) {
     case eGamePlaying:
       // Calculations for the current frame.
-      UpdateBullets(gGameData);
+      UpdateAtoms(gGameData);
       UpdatePlayer(gGameData);
       UpdateGameState(gGameData);
       break;
@@ -253,21 +253,21 @@ namespace cat {
   }
 
 
-  void UpdateBullets(GameData* game)
+  void UpdateAtoms(GameData* game)
   {
     assert(game != NULL);
 
-    BulletData& bullets = game->particles;
+    if (game->currentLevel == game->levels.end())
+      return;
 
-    Vec2 bottomLeft(bullets.bulletSize, bullets.bulletSize);
-    Vec2 topRight(1.0 - bullets.bulletSize, 1.0 - bullets.bulletSize);
+    Level& level = *game->currentLevel;
+    Vec2 bottomLeft(kAtomSize / 2.0, kAtomSize / 2.0);
+    Vec2 topRight(1.0 - kAtomSize / 2.0, 1.0 - kAtomSize / 2.0);
 
-    // Expire bullets?
-
-    // Move bullets
-    for (unsigned int i = 0; i < bullets.count; ++i) {
-      Vec2 pos = bullets.position[i];
-      Vec2 vel = bullets.velocity[i];
+    // Move existing atoms
+    for (unsigned int i = 0; i < level.atomCount; ++i) {
+      Vec2 pos = level.position[i];
+      Vec2 vel = level.velocity[i];
 
       pos += vel;
       
@@ -289,46 +289,14 @@ namespace cat {
         vel.y = -vel.y;
       }
 
-      bullets.position[i] = pos;
-      bullets.velocity[i] = vel;
+      level.position[i] = pos;
+      level.velocity[i] = vel;
     }
 
-    // Emit new bullets
-    while (bullets.count < kMaxBullets && game->gameTime >= bullets.lastEmit + bullets.halfLife) {
-      bullets.lastEmit += bullets.halfLife;
-      bullets.halfLife = pow(bullets.halfLife, 0.999);
-
-      // Random emit position along any wall.
-      int wall = int(drand48() * 4) % 4;
-      float angle = (drand48() * 0.9 + 0.05) * M_PI; // in radians, 0 is parallel to +ve x axis, pi/2 is +ve y axis
-      float speed = drand48() * 0.003 + 0.001; // Random speed between 0.001 and 0.004
-      switch (wall) {
-      case 0: // left wall
-        bullets.position[bullets.count] = Vec2(0, drand48());
-        angle += M_PI_2;
-        break;
-      case 1: // top wall
-        bullets.position[bullets.count] = Vec2(drand48(), 1);
-        angle += M_PI;
-        break;
-      case 2: // right wall
-        bullets.position[bullets.count] = Vec2(1, drand48());
-        angle -= M_PI_2;
-        break;
-      case 3: // bottom wall
-        bullets.position[bullets.count] = Vec2(drand48(), 0);
-        break;
-      }
-
-      // Random velocity with length between 0.005 and 0.01.
-      bullets.velocity[bullets.count] = Vec2(cos(angle), sin(angle)) * speed;
-      //bullets.velocity[bullets.count] = Vec2(0, 0);
-
-      bullets.launchTime[bullets.count] = bullets.lastEmit;
-      bullets.flags[bullets.count] = 0;
-
-      ++bullets.count;
-    }
+    // Emit new atoms
+    double levelTime = game->gameTime - level.startTime;
+    while (level.atomCount < kMaxAtoms && level.launchTime[level.atomCount] <= levelTime)
+      ++level.atomCount;
   }
 
 
@@ -432,9 +400,18 @@ namespace cat {
     if (game->gameState == eGameTitleScreen)
       return;
 
+    if (game->currentLevel == game->levels.end())
+      return;
+
+    Level& level = *game->currentLevel;
+    if (game->gameTime > level.endTime) {
+      // TODO: state transition to eGameFinishedLevel for 3 secs then eGameStartingLevel for 3 secs.
+      ++game->currentLevel;
+      return;
+    }
+
     // Check for collisions between the player and the bullets.
     PlayerData& player = game->player;
-
     if (player.powerUp == ePowerUpSuperposition) {
       // Not affected by collisions when superposed.
       player.collision = false;
@@ -463,15 +440,10 @@ namespace cat {
     game->player.livesRemaining = 9;
     game->player.superpositionsRemaining = 3;
     game->player.entanglementsRemaining = 1;
+
+    game->currentLevel = game->levels.begin();
+
     StartNewLife(game);
-
-    game->particles.count = 0;
-    game->particles.bulletSize = 0.04;
-    game->particles.lastEmit = 0;
-    game->particles.halfLife = 1000.0;
-
-    // Reset the random seed.
-    srand48(0xCA7CA7);
   }
 
 
@@ -480,6 +452,7 @@ namespace cat {
     game->player.position = Vec2(0.5, 0.5);
     game->player.collision = false;
     SetPowerUp(game, ePowerUpSuperposition);
+    game->currentLevel->startLevel(game->gameTime + 1000.0);
   }
 
 

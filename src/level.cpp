@@ -81,7 +81,7 @@ namespace cat {
     std::ostringstream name;
     name << firstWord[firstIndex] << " " << secondWord[secondIndex];
     
-    int numAtoms = int(drand48() * kMaxAtoms) % kMaxAtoms;
+    int numAtoms = int(drand48() * 64) % 64;
     double emitFrequency = drand48() * 1000.0;
 
     level.name = name.str();

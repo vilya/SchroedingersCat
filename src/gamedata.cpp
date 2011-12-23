@@ -6,6 +6,13 @@
 namespace cat {
   
   //
+  // Constants
+  //
+
+  const float kAtomSize = 0.03;
+
+
+  //
   // Global variables
   //
 
@@ -31,19 +38,6 @@ namespace cat {
 
 
   //
-  // BulletData public methods
-  //
-
-  BulletData::BulletData() :
-    count(0),
-    bulletSize(0.03),
-    lastEmit(0),
-    halfLife(1000.0)
-  {
-  }
-
-
-  //
   // WindowData public methods
   //
 
@@ -62,10 +56,13 @@ namespace cat {
     gameState(eGameTitleScreen),
     gameTime(0),
     player(),
-    particles(),
     window(),
-    draw(NULL)
+    draw(NULL),
+    levels(),
+    currentLevel(NULL)
   {
+    levels.push_back(Level());
+    RandomLevel(levels.back());
   }
 
 

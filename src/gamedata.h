@@ -1,7 +1,10 @@
 #ifndef cat_gamedata_h
 #define cat_gamedata_h
 
+#include "level.h"
 #include "vec2.h"
+
+#include <list>
 
 namespace cat {
 
@@ -11,7 +14,6 @@ namespace cat {
 
   struct GameData;
   struct PlayerData;
-  struct BulletData;
 
   struct DrawingData; // Opaque structure used as a cache for graphics data; see drawing.cpp for details.
 
@@ -20,8 +22,7 @@ namespace cat {
   // Constants
   //
 
-  // Maximum number of bullets that can be live at any one time.
-  static const unsigned int kMaxBullets = 1024;
+  extern const float kAtomSize;
 
 
   //
@@ -74,21 +75,6 @@ namespace cat {
   };
 
 
-  struct BulletData {
-    unsigned int count;
-    double bulletSize;
-    double lastEmit;
-    double halfLife;
-
-    Vec2 position[kMaxBullets];
-    Vec2 velocity[kMaxBullets];
-    double launchTime[kMaxBullets];
-    unsigned int flags[kMaxBullets];
-
-    BulletData();
-  };
-
-
   struct WindowData {
     int width;
     int height;
@@ -113,12 +99,13 @@ namespace cat {
     double stateChangeTime;
     // Player state.
     PlayerData player;
-    // Bullet state.
-    BulletData particles;
     // Data about the game window.
     WindowData window;
     // Cached drawing data.
     DrawingData* draw;
+    // Levels.
+    std::list<Level> levels;
+    std::list<Level>::iterator currentLevel;
 
     GameData();
   };

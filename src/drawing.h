@@ -21,7 +21,7 @@ namespace cat {
   void InitDrawing(GameData* game);
 
   void DrawPlayArea(GameData* game);
-  void DrawBullets(GameData* game);
+  void DrawAtoms(GameData* game);
   void DrawPlayer(GameData* game);
   void DrawEffects(GameData* game);
   void DrawHUD(GameData* game);
