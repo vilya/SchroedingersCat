@@ -25,9 +25,6 @@ namespace cat {
   // Constants
   //
 
-  //static const GLuint kVertexAttrib = 0;
-  //static const GLuint kTexCoordAttrib = 1;
-
   static const float kFloorZ = -1;
   static const float kPlayerZ = -0.5;
   static const float kAtomZ = -0.2;
@@ -68,10 +65,8 @@ namespace cat {
   //
 
   GLuint UploadTexture(const char* filename);
-  void DrawTiledQuad(double x, double y, double z, double w, double h,
-                     GLuint textureID, double horizTiles, double vertTiles);
+  void DrawQuad(double x, double y, double z, double w, double h, GLuint textureID);
   void DrawText(double x, double y, const char* text, StringAlignment alignment);
-
   float StringWidth(void* font, const char* text);
   bool CheckGLError(const char *errMsg);
 
@@ -153,7 +148,7 @@ namespace cat {
     assert(game != NULL);
     assert(game->draw != NULL);
 
-    DrawTiledQuad(0, 0, kFloorZ, 1, 1, game->draw->floorTextureID, 1, 1);
+    DrawQuad(0, 0, kFloorZ, 1, 1, game->draw->floorTextureID);
   }
 
 
@@ -180,7 +175,7 @@ namespace cat {
     // Keep track of how many pixels are drawn for the player. If this is less
     // than normal it means the player's hit something.
     glBeginQuery(GL_SAMPLES_PASSED, draw->collisionQueryID);
-    DrawTiledQuad(bottomLeft.x, bottomLeft.y, kPlayerZ, player.size.x, player.size.y, textureID, 1, 1);
+    DrawQuad(bottomLeft.x, bottomLeft.y, kPlayerZ, player.size.x, player.size.y, textureID);
     glEndQuery(GL_SAMPLES_PASSED);
 
     GLuint pixelsDrawn = 0;
@@ -271,7 +266,7 @@ namespace cat {
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    DrawTiledQuad(0.1, 0.5, kTextZ, 0.8, 0.3, game->draw->titleTextureID, 1, 1);
+    DrawQuad(0.1, 0.5, kTextZ, 0.8, 0.3, game->draw->titleTextureID);
     glDisable(GL_BLEND);
 
     float y = gGameData->window.height / 3.0;
@@ -325,7 +320,7 @@ namespace cat {
   }
 
 
-  void DrawTiledQuad(double x, double y, double z, double w, double h, GLuint textureID, double horizTiles, double vertTiles)
+  void DrawQuad(double x, double y, double z, double w, double h, GLuint textureID)
   {
     glBindTexture(GL_TEXTURE_2D, textureID);
     glEnable(GL_TEXTURE_2D);
@@ -334,13 +329,13 @@ namespace cat {
       glTexCoord2f(0, 0);
       glVertex3d(x, y, z);
 
-      glTexCoord2f(horizTiles, 0);
+      glTexCoord2f(1, 0);
       glVertex3d(x + w, y, z);
 
-      glTexCoord2f(horizTiles, vertTiles);
+      glTexCoord2f(1, 1);
       glVertex3d(x + w, y + h, z);
 
-      glTexCoord2f(0, vertTiles);
+      glTexCoord2f(0, 1);
       glVertex3d(x, y + h, z);
     glEnd();
 
