@@ -25,6 +25,7 @@ OBJS = \
 	$(OBJ)/drawing.o \
 	$(OBJ)/gamedata.o \
 	$(OBJ)/image.o \
+	$(OBJ)/level.o \
 	$(OBJ)/main.o \
 	$(OBJ)/resource.o \
 	$(OBJ)/vec2.o
