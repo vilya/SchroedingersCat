@@ -434,7 +434,6 @@ namespace cat {
 
     // Check for collisions between the player and the bullets.
     PlayerData& player = game->player;
-    BulletData& bullets = game->particles;
 
     if (player.powerUp == ePowerUpSuperposition) {
       // Not affected by collisions when superposed.
@@ -470,6 +469,9 @@ namespace cat {
     game->particles.bulletSize = 0.04;
     game->particles.lastEmit = 0;
     game->particles.halfLife = 1000.0;
+
+    // Reset the random seed.
+    srand48(0xCA7CA7);
   }
 
 
