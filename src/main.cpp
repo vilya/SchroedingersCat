@@ -298,7 +298,7 @@ namespace cat {
       bullets.lastEmit += bullets.halfLife;
       bullets.halfLife = pow(bullets.halfLife, 0.999);
 
-      // Random emit position anywhere in the play area.
+      // Random emit position along any wall.
       int wall = int(drand48() * 4) % 4;
       float angle = (drand48() * 0.9 + 0.05) * M_PI; // in radians, 0 is parallel to +ve x axis, pi/2 is +ve y axis
       float speed = drand48() * 0.003 + 0.001; // Random speed between 0.001 and 0.004
