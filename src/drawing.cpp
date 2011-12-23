@@ -239,13 +239,19 @@ namespace cat {
     assert(game != NULL);
     assert(game->draw != NULL);
 
+    if (game->currentLevel == game->levels.end())
+      return;
+
+    Level& level = *game->currentLevel;
     WindowData& win = game->window;
 
     float top = win.height - kCharHeight - 10;
     float bottom = 10 + kCharHeight;
     char msg[1024];
+    double timeElapsed = game->gameTime - level.startTime;
+    double timeLeft = level.duration - timeElapsed;
 
-    snprintf(msg, 1024, "Survived %1.2fs", game->gameTime / 1000.0);
+    snprintf(msg, 1024, "Remaining %1.2lfs", timeLeft / 1000.0);
     DrawText(10, top, msg, eAlignLeft);
 
     snprintf(msg, 1024, "%d lives", game->player.livesRemaining);
