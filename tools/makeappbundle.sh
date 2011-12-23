@@ -10,7 +10,6 @@ executable=$2
 resourcedir=$3
 
 targetexe=$target/Contents/MacOS/`basename $executable`
-echo "=== targetexe = $targetexe"
 
 if [ ! -x $executable ]; then
   if [ -e $executable ]; then
