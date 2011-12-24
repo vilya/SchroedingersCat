@@ -42,20 +42,15 @@ namespace cat {
 
     Level();
 
-    // Add initial atom data.
+    // Call this repeatedly to add fixed initial atom data.
     void addAtom(AtomType type, double t, const Vec2& pos, const Vec2& vel);
 
+    // Call this once to generate a random level.
+    void randomise(int numAtoms = -1, double emitFrequency = -1.0, double maxSpeed = 0.004, double minSpeed = 0.001);
+
     // Reset the dynamic data, ready to play the level again.
-    void startLevel(double gameTime);
+    void startLevel();
   };
-
-
-  //
-  // Functions
-  //
-
-  bool RandomLevel(Level& level);
-  bool LoadLevel(Level& level);
 
 } // namespace cat
 

@@ -425,8 +425,10 @@ namespace cat {
       break;
 
     case eGameStartingLevel:
-      if (elapsed >= 3000.0)
+      if (elapsed >= 3000.0) {
+        game->currentLevel->startLevel();
         SetGameState(game, eGamePlaying);
+      }
       break;
 
     case eGameFinishedLevel:
@@ -487,7 +489,7 @@ namespace cat {
     game->player.collision = false;
     SetPowerUp(game, ePowerUpSuperposition);
 
-    game->currentLevel->startLevel(game->gameTime + 1000.0);
+    game->currentLevel->startLevel();
     SetGameState(game, eGameStartingLevel);
   }
 

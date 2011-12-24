@@ -61,9 +61,26 @@ namespace cat {
     levels(),
     currentLevel(NULL)
   {
-    for (int i = 0; i < 1; ++i) {
+    struct {
+      int numAtoms;
+      double emitFrequency;
+      double maxSpeed;
+      double minSpeed;
+    } levelParams[] = {
+      { 8, 1000.0, 0.002, 0.001 },
+      { 12, 900.0, 0.003, 0.001 },
+      { 16, 800.0, 0.004, 0.001 },
+      { 24, 800.0, 0.004, 0.001 },
+      { 32, 800.0, 0.004, 0.001 },
+      { 40, 700.0, 0.004, 0.001 },
+      { 50, 700.0, 0.004, 0.001 },
+      { 0, 0, 0, 0 }
+    };
+
+    for (int i = 0; levelParams[i].numAtoms != 0; ++i) {
       levels.push_back(Level());
-      RandomLevel(levels.back());
+      levels.back().randomise(levelParams[i].numAtoms, levelParams[i].emitFrequency,
+                              levelParams[i].maxSpeed, levelParams[i].minSpeed);
     }
   }
 
@@ -75,6 +92,7 @@ namespace cat {
   void InitGameData()
   {
     assert(gGameData == NULL);
+    srand48(0xCA7CA7);
     gGameData = new GameData();
   }
 

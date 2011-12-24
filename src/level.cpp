@@ -39,50 +39,45 @@ namespace cat {
   }
 
 
-  void Level::startLevel(double gameTime)
+  void Level::randomise(int numAtoms, double emitFrequency, double maxSpeed, double minSpeed)
   {
-    atomCount = 0;
-    std::copy(launchPosition, launchPosition + maxAtomCount, position);
-    std::copy(launchVelocity, launchVelocity + maxAtomCount, velocity);
-  }
-
-
-  //
-  // Functions
-  //
-
-  bool RandomLevel(Level& level)
-  {
-    const std::string firstWord[] = {
+    const std::string adjective[] = {
       "Random",
       "Quantum",
       "Imaginary",
       "Strange",
       "Weird",
-      "Happy"
+      "Happy",
+      "Unconventional"
     };
-    const std::string secondWord[] = {
+    const std::string noun[] = {
       "Level",
       "World",
       "Science",
       "Feline",
       "Stuff",
-      "Cat"
+      "Cat",
+      "Experiment"
     };
+    const int kNumAdjectives = 7;
+    const int kNumNouns = 7;
     const double kNormalThresh = 0.95;
     const double kSuperpositionThresh = 0.99;
 
-    int firstIndex = int(drand48() * 6) % 6;
-    int secondIndex = int(drand48() * 6) % 6;
-    std::ostringstream name;
-    name << firstWord[firstIndex] << " " << secondWord[secondIndex];
+    int adjectiveIndex = int(drand48() * kNumAdjectives) % kNumAdjectives;
+    int nounIndex = int(drand48() * kNumNouns) % kNumNouns;
+    std::ostringstream buf;
+    buf << adjective[adjectiveIndex] << " " << noun[nounIndex];
     
-    int numAtoms = int(drand48() * 64) % 64;
-    double emitFrequency = drand48() * 1000.0;
+    while (numAtoms <= 0)
+      numAtoms = int(drand48() * 64) % 64;
 
-    level.name = name.str();
-    level.duration = emitFrequency * numAtoms + 5000.0;
-    level.maxAtomCount = 0;
+    while (emitFrequency <= 0)
+      emitFrequency = drand48() * 1000.0;
+
+    name = buf.str();
+    duration = emitFrequency * numAtoms + 5000.0;
+    maxAtomCount = 0;
     
     for (int i = 0; i < numAtoms; ++i) {
       double typeVal = drand48();
@@ -93,7 +88,7 @@ namespace cat {
       // Random emit position along any wall.
       int wall = int(drand48() * 4) % 4;
       float angle = (drand48() * 0.9 + 0.05) * M_PI; // in radians, 0 is parallel to +ve x axis, pi/2 is +ve y axis
-      float speed = drand48() * 0.003 + 0.001; // Random speed between 0.001 and 0.004
+      float speed = drand48() * (maxSpeed - minSpeed) + minSpeed;
 
       Vec2 pos;
       switch (wall) {
@@ -116,18 +111,18 @@ namespace cat {
 
       Vec2 vel = Vec2(cos(angle), sin(angle)) * speed;
 
-      level.addAtom(type, (i + 1) * emitFrequency, pos, vel);
+      addAtom(type, (i + 1) * emitFrequency, pos, vel);
     }
-
-    return true;
   }
 
 
-  bool LoadLevel(Level& level)
+  void Level::startLevel()
   {
-    // TODO
-    return false;
+    atomCount = 0;
+    std::copy(launchPosition, launchPosition + maxAtomCount, position);
+    std::copy(launchVelocity, launchVelocity + maxAtomCount, velocity);
   }
+
 
 } // namespace cat
 
