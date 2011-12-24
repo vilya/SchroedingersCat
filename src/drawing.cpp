@@ -250,9 +250,11 @@ namespace cat {
     snprintf(msg, 1024, "%d lives", game->player.livesRemaining);
     DrawText(10, top, msg, eAlignRight);
 
-    snprintf(msg, 1024, "Superposition: %d\nEntanglement: %d",
-             game->player.superpositionsRemaining,
-             game->player.entanglementsRemaining);
+    //snprintf(msg, 1024, "Superposition: %d\nEntanglement: %d",
+    //         game->player.superpositionsRemaining,
+    //         game->player.entanglementsRemaining);
+    snprintf(msg, 1024, "Superposition: %d",
+             game->player.superpositionsRemaining);
     DrawText(10, bottom, msg, eAlignLeft);
   }
 
@@ -324,7 +326,7 @@ namespace cat {
     float y = (game->window.height - kCharHeight * 2) * 2.0 / 3.0;
 
     DrawText(0, y, level.name.c_str(), eAlignCenter);
-    y += kCharHeight;
+    y -= kCharHeight;
     DrawText(0, y, timeLeftStr, eAlignCenter);
   }
 

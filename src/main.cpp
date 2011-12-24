@@ -487,7 +487,7 @@ namespace cat {
   {
     game->player.position = Vec2(0.5, 0.5);
     game->player.collision = false;
-    SetPowerUp(game, ePowerUpSuperposition);
+    SetPowerUp(game, ePowerUpNone);
 
     game->currentLevel->startLevel();
     SetGameState(game, eGameStartingLevel);
