@@ -14,8 +14,8 @@ LDFLAGS =
 LIBS = -lGL -lglut -ljpeg -lpng -ltiff
 GAME = game-linux
 else
-CCFLAGS = -Wall -g -I/opt/local/include
-LDFLAGS = -headerpad_max_install_names -L/opt/local/lib
+CCFLAGS = -Wall -g -isysroot /Developer/SDKs/MacOSX10.6.sdk -I/opt/local/include
+LDFLAGS = -headerpad_max_install_names -macosx_version_min=10.6 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.6.sdk -L/opt/local/lib
 LIBS = -framework OpenGL -framework GLUT -ljpeg -lpng -ltiff
 GAME = game-osx
 endif
