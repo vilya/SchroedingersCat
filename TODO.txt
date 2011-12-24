@@ -1,8 +1,6 @@
 * Death animations.
 * Warning before power-ups wear off.
-* Restart countdown.
 * Design waves of particles instead of just emitting randomly.
-* Have a fixed number of waves before victory.
 * Add special player abilities (superposition is working, entanglement isn't yet).
 * High score table.
 * Add special collectible particles as a way to replenish power ups.
@@ -12,7 +10,6 @@
 * Nice hand-drawn? bitmapped font (there are lots of great free ones at www.dafont.com).
 * Sound effects.
 * Music.
-* Congratulations screen for when you complete it.
 * Credits.
 * Fullscreen mode.
 * Joystick/other input device support.
