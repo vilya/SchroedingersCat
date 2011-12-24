@@ -42,6 +42,7 @@ namespace cat {
     eGamePlaying,
     eGameFinishedLevel,
     eGameOver,
+    eGameVictory,
     eGamePaused
   };
 

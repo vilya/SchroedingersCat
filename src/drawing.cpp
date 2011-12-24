@@ -329,6 +329,22 @@ namespace cat {
   }
 
 
+  void DrawVictory(GameData* game)
+  {
+    assert(game != NULL);
+    assert(game->draw != NULL);
+
+    float y = (game->window.height - kCharHeight * 4) / 2.0;
+    DrawText(0, y, "You win!", eAlignCenter);
+    y -= kCharHeight * 2;
+    DrawText(0, y, "CONGRATULATIONS!", eAlignCenter);
+    y -= kCharHeight * 2;
+    DrawText(0, y, "Dr Schroedinger has opened the box and collapsed your waveform\n"
+                   "into one alive but very annoyed cat. Time for some revenge - let's\n"
+                   "see how HE likes it inside the box!", eAlignCenter);
+  }
+
+
   void WindowResized(GameData* game)
   {
     assert(game != NULL);

@@ -29,6 +29,7 @@ namespace cat {
   void DrawPause(GameData* game);
   void DrawLevelComplete(GameData* game);
   void DrawLevelCountdown(GameData* game);
+  void DrawVictory(GameData* game);
 
   // Callback to notify the drawing system when the window gets resized.
   void WindowResized(GameData* game);

@@ -129,6 +129,10 @@ namespace cat {
       DrawPlayArea(gGameData);
       DrawGameOver(gGameData);
       break;
+    case eGameVictory:
+      DrawPlayArea(gGameData);
+      DrawVictory(gGameData);
+      break;
     case eGamePaused:
       DrawPlayArea(gGameData);
       DrawAtoms(gGameData);
@@ -413,6 +417,13 @@ namespace cat {
         SetGameState(game, eGameTitleScreen);
       break;
 
+    case eGameVictory:
+      if (anyKeyPressed)
+        StartNewGame(game);
+      else if (elapsed >= 30000.0)
+        SetGameState(game, eGameTitleScreen);
+      break;
+
     case eGameStartingLevel:
       if (elapsed >= 3000.0)
         SetGameState(game, eGamePlaying);
@@ -424,7 +435,7 @@ namespace cat {
         if (game->currentLevel != game->levels.end())
           SetGameState(game, eGameStartingLevel);
         else
-          SetGameState(game, eGameOver);
+          SetGameState(game, eGameVictory);
       }
       break;
 
