@@ -36,8 +36,6 @@ namespace cat {
     Vec2 launchVelocity[kMaxAtoms];
 
     // Dynamic level data.
-    double startTime;
-    double endTime;
     unsigned int atomCount;
     Vec2 position[kMaxAtoms];
     Vec2 velocity[kMaxAtoms];

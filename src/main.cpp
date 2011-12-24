@@ -109,12 +109,21 @@ namespace cat {
       DrawPlayArea(gGameData);
       DrawTitles(gGameData);
       break;
+    case eGameStartingLevel:
+      DrawPlayArea(gGameData);
+      DrawPlayer(gGameData);
+      DrawLevelCountdown(gGameData);
+      break;
     case eGamePlaying:
       DrawPlayArea(gGameData);
       DrawAtoms(gGameData);
       DrawPlayer(gGameData);
-      DrawEffects(gGameData);
       DrawHUD(gGameData);
+      break;
+    case eGameFinishedLevel:
+      DrawPlayArea(gGameData);
+      DrawPlayer(gGameData);
+      DrawLevelComplete(gGameData);
       break;
     case eGameOver:
       DrawPlayArea(gGameData);
@@ -124,7 +133,6 @@ namespace cat {
       DrawPlayArea(gGameData);
       DrawAtoms(gGameData);
       DrawPlayer(gGameData);
-      DrawEffects(gGameData);
       DrawHUD(gGameData);
       DrawPause(gGameData);
       break;
@@ -228,16 +236,21 @@ namespace cat {
     double frameStartTime = Now();
 
     switch (gGameData->gameState) {
+    case eGameStartingLevel:
+      UpdatePlayer(gGameData);
+      break;
     case eGamePlaying:
       // Calculations for the current frame.
       UpdateAtoms(gGameData);
       UpdatePlayer(gGameData);
-      UpdateGameState(gGameData);
+      break;
+    case eGameFinishedLevel:
+      UpdatePlayer(gGameData);
       break;
     default:
-      UpdateGameState(gGameData);
       break;
     }
+    UpdateGameState(gGameData);
 
     glutPostRedisplay();
 
@@ -294,7 +307,7 @@ namespace cat {
     }
 
     // Emit new atoms
-    double levelTime = game->gameTime - level.startTime;
+    double levelTime = game->gameTime - game->stateChangeTime;
     while (level.atomCount < kMaxAtoms && level.launchTime[level.atomCount] <= levelTime)
       ++level.atomCount;
   }
@@ -373,67 +386,77 @@ namespace cat {
   {
     assert(game != NULL);
 
-    if (game->gameState == eGameOver || game->gameState == eGameTitleScreen) {
-      for (int i = 0; i < 256; ++i) {
-        if (game->window.keyPressed[i]) {
-          StartNewGame(game);
-          return;
-        }
-      }
-    }
-    else if (game->gameState == eGamePaused) {
-      for (int i = 0; i < 256; ++i) {
-        if (game->window.keyPressed[i]) {
-          SetGameState(game, eGamePlaying);
-          return;
-        }
+    double elapsed = game->gameTime - game->stateChangeTime;
+    bool anyKeyPressed = false;
+    for (int i = 0; i < 256; ++i) {
+      if (game->window.keyPressed[i]) {
+        anyKeyPressed = true;
+        break;
       }
     }
 
-    if (game->gameState == eGameOver) {
-      float elapsed = game->gameTime - game->stateChangeTime;
-      if (elapsed >= 5000)
+    switch (game->gameState) {
+    case eGameTitleScreen:
+      if (anyKeyPressed)
+        StartNewGame(game);
+      break;
+
+    case eGamePaused:
+      if (anyKeyPressed)
+        SetGameState(game, eGamePlaying);
+      break;
+
+    case eGameOver:
+      if (anyKeyPressed)
+        StartNewGame(game);
+      else if (elapsed >= 5000.0)
         SetGameState(game, eGameTitleScreen);
-      return;
-    }
+      break;
 
-    if (game->gameState == eGameTitleScreen)
-      return;
+    case eGameStartingLevel:
+      if (elapsed >= 3000.0)
+        SetGameState(game, eGamePlaying);
+      break;
 
-    if (game->currentLevel == game->levels.end())
-      return;
+    case eGameFinishedLevel:
+      if (elapsed >= 3000.0) {
+        ++game->currentLevel;
+        if (game->currentLevel != game->levels.end())
+          SetGameState(game, eGameStartingLevel);
+        else
+          SetGameState(game, eGameOver);
+      }
+      break;
 
-    Level& level = *game->currentLevel;
-    if (game->gameTime > level.endTime) {
-      // TODO: state transition to eGameFinishedLevel for 3 secs then eGameStartingLevel for 3 secs.
-      ++game->currentLevel;
-      return;
-    }
+    case eGamePlaying:
+      {
+        Level& level = *game->currentLevel;
+        if (elapsed >= level.duration) {
+          SetGameState(game, eGameFinishedLevel);
+          break;
+        }
 
-    // Check for collisions between the player and the bullets.
-    PlayerData& player = game->player;
-    if (player.powerUp == ePowerUpSuperposition) {
-      // Not affected by collisions when superposed.
-      player.collision = false;
-      return;
-    }
-
-    // TODO: add handling for the entanglement power up.
-
-    if (player.collision) {
-      --player.livesRemaining;
-      if (player.livesRemaining <= 0)
-        SetGameState(game, eGameOver);
-      else
-        StartNewLife(game);
+        PlayerData& player = game->player;
+        if (player.powerUp == ePowerUpSuperposition) {
+          player.collision = false;
+          break;
+        }
+        // TODO: add handling for entanglement.
+        if (player.collision) {
+          --player.livesRemaining;
+          if (player.livesRemaining <= 0)
+            SetGameState(game, eGameOver);
+          else
+            StartNewLife(game);
+        }
+      }
     }
   }
 
 
   void StartNewGame(GameData* game)
   {
-    SetGameState(game, eGamePlaying);
-    game->gameState = eGamePlaying;
+    SetGameState(game, eGameStartingLevel);
     game->gameTime = 0;
 
     game->player.size = Vec2(0.06, 0.06);
@@ -452,7 +475,9 @@ namespace cat {
     game->player.position = Vec2(0.5, 0.5);
     game->player.collision = false;
     SetPowerUp(game, ePowerUpSuperposition);
+
     game->currentLevel->startLevel(game->gameTime + 1000.0);
+    SetGameState(game, eGameStartingLevel);
   }
 
 

@@ -6,6 +6,7 @@
 #include "resource.h"
 
 #include <cassert>
+#include <cmath>
 #include <cstdlib>
 #include <cstdio>
 
@@ -226,14 +227,6 @@ namespace cat {
   }
 
 
-  void DrawEffects(GameData* game)
-  {
-    assert(game != NULL);
-    assert(game->draw != NULL);
-    // TODO
-  }
-
-
   void DrawHUD(GameData* game)
   {
     assert(game != NULL);
@@ -248,7 +241,7 @@ namespace cat {
     float top = win.height - kCharHeight - 10;
     float bottom = 10 + kCharHeight;
     char msg[1024];
-    double timeElapsed = game->gameTime - level.startTime;
+    double timeElapsed = game->gameTime - game->stateChangeTime;
     double timeLeft = level.duration - timeElapsed;
 
     snprintf(msg, 1024, "Remaining %1.2lfs", timeLeft / 1000.0);
@@ -275,7 +268,7 @@ namespace cat {
     DrawQuad(0.1, 0.5, kTextZ, 0.8, 0.3, game->draw->titleTextureID);
     glDisable(GL_BLEND);
 
-    float y = gGameData->window.height / 3.0;
+    float y = game->window.height / 3.0;
 
     //DrawText(0, y, "(c) Vilya Harvey, 2011", eAlignCenter);
     //y -= kCharHeight * 2;
@@ -289,7 +282,9 @@ namespace cat {
   {
     assert(game != NULL);
     assert(game->draw != NULL);
-    DrawText(0, gGameData->window.height / 2.0f, "GAME OVER\nPress [space] to try again, [esc] to quit", eAlignCenter);
+
+    float y = (game->window.height - kCharHeight) / 2.0;
+    DrawText(0, y, "GAME OVER\nPress [space] to try again, [esc] to quit", eAlignCenter);
   }
 
 
@@ -297,7 +292,40 @@ namespace cat {
   {
     assert(game != NULL);
     assert(game->draw != NULL);
-    DrawText(0, gGameData->window.height / 2.0f, "PAUSED\nPress [space] to continue, [esc] to quit", eAlignCenter);
+
+    float y = (game->window.height - kCharHeight) / 2.0;
+    DrawText(0, y, "PAUSED\nPress [space] to continue, [esc] to quit", eAlignCenter);
+  }
+
+
+  void DrawLevelComplete(GameData* game)
+  {
+    assert(game != NULL);
+    assert(game->draw != NULL);
+
+    float y = (game->window.height - kCharHeight) / 2.0;
+    DrawText(0, y, "Level complete!", eAlignCenter);
+  }
+
+
+  void DrawLevelCountdown(GameData* game)
+  {
+    assert(game != NULL);
+    assert(game->draw != NULL);
+
+    if (game->currentLevel == game->levels.end())
+      return;
+
+    Level& level = *game->currentLevel;
+    float timeLeft = (game->stateChangeTime + 3000.0 - game->gameTime) / 1000.0;
+    char timeLeftStr[256];
+    snprintf(timeLeftStr, 256, "%d...", int(ceil(timeLeft)));
+
+    float y = (game->window.height - kCharHeight * 2) * 2.0 / 3.0;
+
+    DrawText(0, y, level.name.c_str(), eAlignCenter);
+    y += kCharHeight;
+    DrawText(0, y, timeLeftStr, eAlignCenter);
   }
 
 

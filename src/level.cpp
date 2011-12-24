@@ -14,8 +14,6 @@ namespace cat {
     name(),
     duration(0),
     maxAtomCount(0),
-    startTime(0),
-    endTime(0),
     atomCount(0)
   {
     std::fill(atomType, atomType + kMaxAtoms, eAtomNormal);
@@ -43,8 +41,6 @@ namespace cat {
 
   void Level::startLevel(double gameTime)
   {
-    startTime = gameTime;
-    endTime = gameTime + duration;
     atomCount = 0;
     std::copy(launchPosition, launchPosition + maxAtomCount, position);
     std::copy(launchVelocity, launchVelocity + maxAtomCount, velocity);

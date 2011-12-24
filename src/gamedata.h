@@ -38,7 +38,9 @@ namespace cat {
 
   enum GameState {
     eGameTitleScreen,
+    eGameStartingLevel,
     eGamePlaying,
+    eGameFinishedLevel,
     eGameOver,
     eGamePaused
   };

@@ -61,8 +61,10 @@ namespace cat {
     levels(),
     currentLevel(NULL)
   {
-    levels.push_back(Level());
-    RandomLevel(levels.back());
+    for (int i = 0; i < 2; ++i) {
+      levels.push_back(Level());
+      RandomLevel(levels.back());
+    }
   }
 
 

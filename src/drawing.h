@@ -23,11 +23,12 @@ namespace cat {
   void DrawPlayArea(GameData* game);
   void DrawAtoms(GameData* game);
   void DrawPlayer(GameData* game);
-  void DrawEffects(GameData* game);
   void DrawHUD(GameData* game);
   void DrawTitles(GameData* game);
   void DrawGameOver(GameData* game);
   void DrawPause(GameData* game);
+  void DrawLevelComplete(GameData* game);
+  void DrawLevelCountdown(GameData* game);
 
   // Callback to notify the drawing system when the window gets resized.
   void WindowResized(GameData* game);
