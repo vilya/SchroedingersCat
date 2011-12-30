@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <cstdio>
 
+#define GL_GLEXT_PROTOTYPES 1
 #ifdef linux
 #include <GL/gl.h>
 #include <GL/glext.h>
