@@ -11,7 +11,7 @@ LD = g++
 ifeq ($(OSTYPE),linux-gnu)
 CCFLAGS = -Wall -g
 LDFLAGS = 
-LIBS = -lGL -lglut -ljpeg -lpng -ltiff
+LIBS = -lGL -lGLU -lglut -ljpeg -lpng -ltiff
 GAME = game-linux
 else
 CCFLAGS = -Wall -g -isysroot /Developer/SDKs/MacOSX10.6.sdk -I/opt/local/include
