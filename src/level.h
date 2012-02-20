@@ -3,6 +3,7 @@
 
 #include "vec2.h"
 
+#include <list>
 #include <string>
 
 namespace cat {
@@ -51,6 +52,13 @@ namespace cat {
     // Reset the dynamic data, ready to play the level again.
     void startLevel();
   };
+
+
+  //
+  // Functions
+  //
+
+  bool LoadLevels(const char* filename, std::list<Level>& levels);
 
 } // namespace cat
 

@@ -119,8 +119,10 @@ namespace cat {
   //
 
   // Creates and initialises the global game data instance. You must call this
-  // before you use the gGameData pointer. You should only call it once.
-  void InitGameData();
+  // before you use the gGameData pointer. You should only call it once. This
+  // will load level data. The return value will be false if something
+  // (probably the resource loading) failed during the initialisation process.
+  bool InitGameData();
 
 } // namespace cat
 

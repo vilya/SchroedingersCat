@@ -1,3 +1,5 @@
+* Level editor
+
 * Death animations.
 * Warning before power-ups wear off.
 * Design waves of particles instead of just emitting randomly.
