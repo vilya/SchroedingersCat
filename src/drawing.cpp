@@ -85,20 +85,20 @@ namespace cat {
     maxPixelsDrawn(0)
   {
     // Load the floor texture.
-    floorTextureID = UploadTexture(ResourcePath("floor_alt.tga"));
+    floorTextureID = UploadTexture(ResourcePath("Floor.tga"));
 
     // Load the player textures.
     const char* frontTexturePaths[] = {
-      "player_front_nopowerup.tga",
-      "player_front_superposition.tga",
-      "player_front_entangling.tga",
-      "player_front_entanglement.tga"
+      "Player_Front_NoPowerup.tga",
+      "Player_Front_Superposition.tga",
+      "Player_Front_Entangling.tga",
+      "Player_Front_Entanglement.tga"
     };
     const char* backTexturePaths[] = {
-      "player_back_nopowerup.tga",
-      "player_back_superposition.tga",
-      "player_back_entangling.tga",
-      "player_back_entanglement.tga"
+      "Player_Back_NoPowerup.tga",
+      "Player_Back_Superposition.tga",
+      "Player_Back_Entangling.tga",
+      "Player_Back_Entanglement.tga"
     };
     for (int p = ePowerUpNone; p < ePowerUpCount; ++p) {
       playerFrontTextureID[p] = UploadTexture(ResourcePath(frontTexturePaths[p]));
@@ -106,7 +106,7 @@ namespace cat {
     }
 
     // Load the particle textures.
-    particleTextureID = UploadTexture(ResourcePath("atom.tga"));
+    particleTextureID = UploadTexture(ResourcePath("Particle.tga"));
 
     // Load the title screen texture.
     titleTextureID = UploadTexture(ResourcePath("TitleScreen.tga"));
@@ -377,6 +377,10 @@ namespace cat {
   {
     glBindTexture(GL_TEXTURE_2D, textureID);
     glEnable(GL_TEXTURE_2D);
+    
+    glMatrixMode(GL_TEXTURE);
+    glPushMatrix();
+    glScalef(1, -1, 1);
 
     glBegin(GL_QUADS);
       glTexCoord2f(0, 0);
@@ -395,6 +399,8 @@ namespace cat {
     // Clean-up
     glDisable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
   }
 
   
