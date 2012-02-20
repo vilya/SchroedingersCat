@@ -4,9 +4,6 @@
 #include <cstring>
 #include <cstdarg>
 #include <cstdio>
-#include <jpeglib.h>  // Required for jpeg support.
-#include <png.h>      // Required for png support.
-#include <tiffio.h>   // Required for tiff support.
 
 #ifdef linux
 #include <GL/gl.h>
