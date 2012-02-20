@@ -85,20 +85,20 @@ namespace cat {
     maxPixelsDrawn(0)
   {
     // Load the floor texture.
-    floorTextureID = UploadTexture(ResourcePath("floor_alt.jpg"));
+    floorTextureID = UploadTexture(ResourcePath("floor_alt.tga"));
 
     // Load the player textures.
     const char* frontTexturePaths[] = {
-      "player_front_nopowerup.tif",
-      "player_front_superposition.tif",
-      "player_front_entangling.tif",
-      "player_front_entanglement.tif"
+      "player_front_nopowerup.tga",
+      "player_front_superposition.tga",
+      "player_front_entangling.tga",
+      "player_front_entanglement.tga"
     };
     const char* backTexturePaths[] = {
-      "player_back_nopowerup.tif",
-      "player_back_superposition.tif",
-      "player_back_entangling.tif",
-      "player_back_entanglement.tif"
+      "player_back_nopowerup.tga",
+      "player_back_superposition.tga",
+      "player_back_entangling.tga",
+      "player_back_entanglement.tga"
     };
     for (int p = ePowerUpNone; p < ePowerUpCount; ++p) {
       playerFrontTextureID[p] = UploadTexture(ResourcePath(frontTexturePaths[p]));
@@ -106,10 +106,10 @@ namespace cat {
     }
 
     // Load the particle textures.
-    particleTextureID = UploadTexture(ResourcePath("atom.tif"));
+    particleTextureID = UploadTexture(ResourcePath("atom.tga"));
 
     // Load the title screen texture.
-    titleTextureID = UploadTexture(ResourcePath("TitleScreen.tif"));
+    titleTextureID = UploadTexture(ResourcePath("TitleScreen.tga"));
 
     // Create a query object which we'll use for collision detection.
     glGenQueries(1, &collisionQueryID);

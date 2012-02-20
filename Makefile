@@ -11,12 +11,12 @@ LD = g++
 ifeq ($(OSTYPE),linux-gnu)
 CCFLAGS = -Wall -g
 LDFLAGS = 
-LIBS = -lGL -lGLU -lglut -ljpeg -lpng -ltiff
+LIBS = -lGL -lGLU -lglut
 GAME = game-linux
 else
-CCFLAGS = -Wall -g -isysroot /Developer/SDKs/MacOSX10.6.sdk -I/opt/local/include
-LDFLAGS = -headerpad_max_install_names -macosx_version_min=10.6 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.6.sdk -L/opt/local/lib
-LIBS = -framework OpenGL -framework GLUT -ljpeg -lpng -ltiff
+CCFLAGS = -Wall -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk -I/opt/local/include
+LDFLAGS = -headerpad_max_install_names -macosx_version_min=10.6 -Wl,-syslibroot,/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk -L/opt/local/lib
+LIBS = -framework OpenGL -framework GLUT
 GAME = game-osx
 endif
 

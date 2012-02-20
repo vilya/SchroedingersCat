@@ -39,10 +39,10 @@ cp $executable $target/Contents/MacOS
 cp tools/rungame.sh $target/Contents/MacOS
 cp -R $resourcedir/* $target/Contents/Resources
 
-cp /opt/local/lib/libjpeg.8.dylib $target/Contents/MacOS
-cp /opt/local/lib/libtiff.3.dylib $target/Contents/MacOS
-cp /opt/local/lib/libpng14.14.dylib $target/Contents/MacOS
-cp /opt/local/lib/libz.1.dylib $target/Contents/MacOS
+#cp /opt/local/lib/libjpeg.8.dylib $target/Contents/MacOS
+#cp /opt/local/lib/libtiff.3.dylib $target/Contents/MacOS
+#cp /opt/local/lib/libpng14.14.dylib $target/Contents/MacOS
+#cp /opt/local/lib/libz.1.dylib $target/Contents/MacOS
 
 install_name_tool -change /opt/local/lib/libjpeg.8.dylib @executable_path/libjpeg.8.dylib $targetexe
 install_name_tool -change /opt/local/lib/libtiff.3.dylib @executable_path/libtiff.3.dylib $targetexe

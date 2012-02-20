@@ -35,8 +35,6 @@ public:
   void uploadTexture(unsigned int texID = 0);
   void uploadTextureAs(int targetType, unsigned int texID = 0);
 
-  void downsampleInPlace(unsigned int downsampleX, unsigned int downsampleY);
-
   //! Like getPixels, but this transfers ownership of the pixel memory to the
   //! caller.
   unsigned char* takePixels();
@@ -49,10 +47,6 @@ public:
 private:
   void loadBMP(FILE* file) throw(ImageException);
   void loadTGA(FILE* file) throw(ImageException);
-  void loadPPM(FILE* file) throw(ImageException);
-  void loadJPG(FILE* file) throw(ImageException);
-  void loadPNG(FILE* file) throw(ImageException);
-  void loadTIFF(const char* filename) throw(ImageException);
 
   void tgaLoadUncompressed(FILE* file, unsigned int numPixels,
       unsigned int bytesPerPixel, unsigned char *pixels)
@@ -61,8 +55,6 @@ private:
   void tgaLoadRLECompressed(FILE* file, unsigned int numPixels,
       unsigned int bytesPerPixel, unsigned char *pixels)
     throw(ImageException);
-
-  int ppmGetNextInt(FILE* file) throw(ImageException);
 
 private:
   int _type;
@@ -73,8 +65,6 @@ private:
   unsigned char* _pixels;
 };
 
-
-Image* downsample(Image* src, unsigned int downsampleX, unsigned int downsampleY);
 
 } // namespace cat
 
