@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <sstream>
 
 namespace cat {
@@ -123,6 +124,95 @@ namespace cat {
     std::copy(launchVelocity, launchVelocity + maxAtomCount, velocity);
   }
 
+
+  //
+  // Functions
+  //
+  
+  bool LoadLevels(const char* filename, std::list<Level>& levels)
+  {
+    FILE* f = fopen(filename, "r");
+    if (!f)
+      return false;
+
+    levels.clear();
+
+    enum ParserState {
+      eParserInitial,
+      eParserDuration,
+      eParserAtoms,
+      eParserError
+    };
+    ParserState state = eParserInitial;
+
+    char atomTypeChr;
+    double atomSpawnTime;
+    Vec2 atomPos;
+    Vec2 atomVel;
+
+    char line[1024];
+    int lineNum = 0;
+    while (fgets(line, 1024, f)) {
+      ++lineNum;
+
+      // Trim off trailing whitespace.
+      size_t len = strlen(line);
+      while (len > 0 && isspace(line[len - 1]))
+        --len;
+      line[len] = '\0';
+      
+      if (len == 0) {
+        state = eParserInitial;
+        continue;
+      }
+
+      switch (state) {
+      case eParserInitial:
+        levels.push_back(Level());
+        levels.back().name = line;
+        state = eParserDuration;
+        break;
+
+      case eParserDuration:
+        if (!strncmp(line, "Duration ", strlen("Duration ")) != 0)
+          state = eParserError;
+        else if (sscanf(line, "Duration %lf", &levels.back().duration) != 1)
+          state = eParserError;
+        else
+          state = eParserAtoms;
+        break;
+
+      case eParserAtoms:
+        if (sscanf(line, "%c %lf %lf %lf %lf %lf", &atomTypeChr, &atomSpawnTime, &atomPos.x, &atomPos.y, &atomVel.x, &atomVel.y) != 6)
+          state = eParserError;
+        else if (atomTypeChr == 'A')
+          levels.back().addAtom(eAtomNormal, atomSpawnTime, atomPos, atomVel);
+        else if (atomTypeChr == 'S')
+          levels.back().addAtom(eAtomSuperposition, atomSpawnTime, atomPos, atomVel);
+        else if (atomTypeChr == 'E')
+          levels.back().addAtom(eAtomEntanglement, atomSpawnTime, atomPos, atomVel);
+        else
+          state = eParserError;
+
+      case eParserError:
+        break;
+      }
+
+      if (state == eParserError) {
+        fprintf(stderr, "%s, line %d: syntax error.\n", filename, lineNum);
+        break;
+      }
+    }
+
+    fclose(f);
+    if (state == eParserDuration) {
+      fprintf(stderr, "%s, line %d: incomplete level, missing duration.\n", filename, lineNum);
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
 
 } // namespace cat
 

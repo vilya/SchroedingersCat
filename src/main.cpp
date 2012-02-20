@@ -535,7 +535,11 @@ int main(int argc, char** argv)
 
   chdir(dirname(argv[0]));
 
-  cat::InitGameData();
+  if (!cat::InitGameData()) {
+    fprintf(stderr, "Game initialisation failed. ABORT ABORT!\n");
+    exit(1);
+  }
+
   cat::Start();
 }
 

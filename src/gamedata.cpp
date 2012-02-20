@@ -1,5 +1,7 @@
 #include "gamedata.h"
 
+#include "resource.h"
+
 #include <cassert>
 #include <cstdlib>
 
@@ -89,11 +91,13 @@ namespace cat {
   // Functions
   //
 
-  void InitGameData()
+  bool InitGameData()
   {
     assert(gGameData == NULL);
     srand48(0xCA7CA7);
     gGameData = new GameData();
+    bool levelsOK = LoadLevels(ResourcePath("levels.txt"), gGameData->levels);
+    return levelsOK;
   }
 
 } // namespace cat
